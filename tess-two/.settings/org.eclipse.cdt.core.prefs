@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/com.android.toolchain.gcc.2086198071/NDKROOT/delimiter=\:
+environment/project/com.android.toolchain.gcc.2086198071/NDKROOT/operation=replace
+environment/project/com.android.toolchain.gcc.2086198071/NDKROOT/value=/home/marc/Android/Sdk/ndk-bundle
+environment/project/com.android.toolchain.gcc.2086198071/append=true
+environment/project/com.android.toolchain.gcc.2086198071/appendContributed=false

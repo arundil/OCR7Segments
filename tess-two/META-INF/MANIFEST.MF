@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: tess-two
+Bundle-SymbolicName: tess-two
+Bundle-Version: 1.0.0.qualifier
+Export-Package: com.googlecode.leptonica.android,
+ com.googlecode.tesseract.android
