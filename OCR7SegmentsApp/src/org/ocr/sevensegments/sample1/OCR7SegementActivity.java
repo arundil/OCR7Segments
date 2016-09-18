@@ -1,9 +1,7 @@
 package org.ocr.sevensegments.sample1;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,11 +22,9 @@ import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.samples.tutorial1.R;
 
 import com.googlecode.leptonica.android.Binarize;
 import com.googlecode.leptonica.android.ReadFile;
@@ -42,7 +38,6 @@ import android.app.Activity;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -57,7 +52,7 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
 	private static final String TAG = "OCVSample::Activity";
     private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
     private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
-    private static final String lang = "segment7";
+    private static final String lang = "7seg";
     protected EditText _field;
     
     List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
@@ -186,7 +181,7 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	/*Imgproc.rectangle(img, new Point(100,100), new Point(300,300), FACE_RECT_COLOR, 3);
         return img;*/
     	
-    	if (Math.random()>0.90) {
+    	if (Math.random()>0.95) {
 
     		squares=findSquares(inputFrame.rgba().clone());
 
@@ -198,8 +193,13 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
         
         if (!squares.isEmpty())
         {
+        	
         	//subimage
         	Mat imageROI = image.submat(Imgproc.boundingRect(squares.get(0)));
+        	
+        	if (squares.get(0).height()<400 && squares.get(0).width()<900){
+        		imageROI = prepareImage4OCR(imageROI);        		
+        	}
         	
  
         	BitmapFactory.Options options = new BitmapFactory.Options();
@@ -207,15 +207,12 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
         	
         	Bitmap bitmap = Bitmap.createBitmap(imageROI.cols(),imageROI.rows(),Bitmap.Config.ARGB_8888);
         	Utils.matToBitmap(imageROI, bitmap);
-        	//Binarize.otsuAdaptiveThreshold(pixs, sizeX, sizeY, smoothX, smoothY, scoreFraction)
         	String _path = DATA_PATH + "/ocr.png";
         	File file = new File(_path);
            	/*Debug*/
-        	Bitmap blancoynegro = Bitmap.createBitmap(imageROI.cols(),imageROI.rows(),Bitmap.Config.ARGB_8888);;
         	try {
 				OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-				blancoynegro = WriteFile.writeBitmap(Binarize.otsuAdaptiveThreshold(ReadFile.readBitmap(bitmap)));
-				blancoynegro.compress(Bitmap.CompressFormat.PNG, 0, os);
+				bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
 				os.close();
 
 			} catch (IOException e) {
@@ -223,32 +220,46 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
 				e.printStackTrace();
 			}
         	
-        	TessBaseAPI baseApi = new TessBaseAPI();
-    		baseApi.setDebug(true);
-    		baseApi.init(DATA_PATH, lang);
-    		baseApi.setImage(file);
-    		
-    		final String recognizedText = baseApi.getUTF8Text();
-    		baseApi.end();
-    		
-    		if ( recognizedText.length() != 0 ) {
-    			//EditText field;	
-    			//field = (EditText) findViewById(R.id.field);
-    			this.runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-						_field.setSelection(_field.getText().toString().length());
-					}
-				});
-    		}
+        	if (bitmap.getHeight()<400 && bitmap.getWidth()<900)
+        	{
+        		TessBaseAPI baseApi = new TessBaseAPI();
+        		baseApi.setDebug(true);
+        		baseApi.init(DATA_PATH, lang);
+        		baseApi.setImage(file);
+
+        		final String recognizedText = baseApi.getUTF8Text();
+        		baseApi.end();
+
+        		if ( recognizedText.length() != 0 ) {
+        			//EditText field;	
+        			//field = (EditText) findViewById(R.id.field);
+        			this.runOnUiThread(new Runnable() {
+
+        				@Override
+        				public void run() {
+        					// TODO Auto-generated method stub
+        					_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
+        					_field.setSelection(_field.getText().toString().length());
+        				}
+        			});
+        		}
+        	}
         }
         
     	return image;
     }
     
+    
+    private Mat prepareImage4OCR (Mat rgb)
+    {
+    	Mat ret = rgb;
+    	Imgproc.medianBlur(rgb, rgb, 5); //Smoooth filter 
+    	Imgproc.cvtColor(rgb, ret, Imgproc.COLOR_RGBA2GRAY);
+    	Imgproc.threshold(ret, ret, 124, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
+    	Mat kernel = Mat.ones(new Size(5,5),CvType.CV_8U);
+    	Imgproc.erode(ret, ret, kernel,new Point(),2);
+    	return ret;
+    }
     
     private List<MatOfPoint> findSquares (Mat inputImage)
     {
