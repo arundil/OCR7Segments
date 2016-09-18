@@ -1,5 +1,5 @@
 # cache for current jar dependency. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
-1473350137000 1422188 1dc1f63cee098b27db60b9a2833fd7ca58f89636 /home/marc/workspace/tess-two-master/tess-two/libs/android-support-v4.jar
-1472988804000 1422188 1dc1f63cee098b27db60b9a2833fd7ca58f89636 /home/marc/OpenCv/Opencv3_1_0/OpenCV-android-sdk/sdk/java/libs/android-support-v4.jar
+1473350137000 1422188 1dc1f63cee098b27db60b9a2833fd7ca58f89636 /home/marc/git/OCR7Segments/tess-two/libs/android-support-v4.jar
+1472988804000 1422188 1dc1f63cee098b27db60b9a2833fd7ca58f89636 /home/marc/git/OCR7Segments/OpenCV Library - 3.1.0/libs/android-support-v4.jar
