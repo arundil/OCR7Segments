@@ -180,72 +180,77 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	//Mat img = getROI(inputFrame.rgba());
     	/*Imgproc.rectangle(img, new Point(100,100), new Point(300,300), FACE_RECT_COLOR, 3);
         return img;*/
-    	
+
     	if (Math.random()>0.95) {
 
     		squares=findSquares(inputFrame.rgba().clone());
 
-        }
+    	}
 
-        Mat image = inputFrame.rgba();
+    	Mat image = inputFrame.rgba();
 
-        Imgproc.drawContours(image, squares, -1, new Scalar(0,0,255));
-        
-        if (!squares.isEmpty())
-        {
-        	
-        	//subimage
-        	Mat imageROI = image.submat(Imgproc.boundingRect(squares.get(0)));
-        	
-        	if (squares.get(0).height()<400 && squares.get(0).width()<900){
-        		imageROI = prepareImage4OCR(imageROI);        		
-        	}
-        	
- 
-        	BitmapFactory.Options options = new BitmapFactory.Options();
-        	options.inSampleSize = 4;
-        	
-        	Bitmap bitmap = Bitmap.createBitmap(imageROI.cols(),imageROI.rows(),Bitmap.Config.ARGB_8888);
-        	Utils.matToBitmap(imageROI, bitmap);
-        	String _path = DATA_PATH + "/ocr.png";
-        	File file = new File(_path);
-           	/*Debug*/
-        	try {
-				OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
-				bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
-				os.close();
+    	Imgproc.drawContours(image, squares, -1, new Scalar(0,0,255));
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	
-        	if (bitmap.getHeight()<400 && bitmap.getWidth()<900)
-        	{
-        		TessBaseAPI baseApi = new TessBaseAPI();
-        		baseApi.setDebug(true);
-        		baseApi.init(DATA_PATH, lang);
-        		baseApi.setImage(file);
+    	if (!squares.isEmpty())
+    	{
 
-        		final String recognizedText = baseApi.getUTF8Text();
-        		baseApi.end();
+    		//subimage
+    		
+    		for (MatOfPoint p :squares)
+    		{
+    			 Log.i(TAG, "With: "+p.elemSize()+" Height: "+p.dims());
+    			
+    			if ((/*p.height()<=400 &&*/ p.height()>=400)  && (/*p.width()<=900 &&*/ p.width()>=150)){
+    				List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
+    				listaux.add(p);
+    				Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR);
+    				Mat imageROI = image.submat(Imgproc.boundingRect(p));
+    				imageROI = prepareImage4OCR(imageROI);        		
 
-        		if ( recognizedText.length() != 0 ) {
-        			//EditText field;	
-        			//field = (EditText) findViewById(R.id.field);
-        			this.runOnUiThread(new Runnable() {
 
-        				@Override
-        				public void run() {
-        					// TODO Auto-generated method stub
-        					_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-        					_field.setSelection(_field.getText().toString().length());
-        				}
-        			});
-        		}
-        	}
-        }
-        
+    				BitmapFactory.Options options = new BitmapFactory.Options();
+    				options.inSampleSize = 4;
+
+    				Bitmap bitmap = Bitmap.createBitmap(imageROI.cols(),imageROI.rows(),Bitmap.Config.ARGB_8888);
+    				Utils.matToBitmap(imageROI, bitmap);
+    				String _path = DATA_PATH + "/ocr.png";
+    				File file = new File(_path);
+    				/*Debug*/
+    				try {
+    					OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+    					bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
+    					os.close();
+
+    				} catch (IOException e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+
+    				TessBaseAPI baseApi = new TessBaseAPI();
+    				baseApi.setDebug(true);
+    				baseApi.init(DATA_PATH, lang);
+    				baseApi.setImage(file);
+
+    				final String recognizedText = baseApi.getUTF8Text();
+    				baseApi.end();
+
+    				if ( recognizedText.length() != 0 ) {
+
+    					this.runOnUiThread(new Runnable() {
+
+    						@Override
+    						public void run() {
+    							// TODO Auto-generated method stub
+    							_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
+    							_field.setSelection(_field.getText().toString().length());
+    						}
+    					});
+    				}
+    				break;
+    			}
+    		}
+    	}
+
     	return image;
     }
     
@@ -258,7 +263,52 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	Imgproc.threshold(ret, ret, 124, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
     	Mat kernel = Mat.ones(new Size(5,5),CvType.CV_8U);
     	Imgproc.erode(ret, ret, kernel,new Point(),2);
+    	//ret = eliminateLines(ret);
     	return ret;
+    }
+    
+    private Mat eliminateLines (Mat imglines)
+    {
+        Mat horizontal = imglines.clone();
+        Mat vertical = imglines.clone();
+        
+    	int verticalsize = vertical.rows() / 30;
+    	int horizontalsize = horizontal.cols() / 30;
+    	
+    	Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,  new Size(1,verticalsize));
+    	Mat horizontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(horizontalsize,1));
+    	
+    	/*Imgproc.erode(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
+    	Imgproc.dilate(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
+    	
+    	Imgproc.erode(vertical, vertical, verticalStructure, new Point(-1, -1),2);
+    	Imgproc.dilate(vertical, vertical, verticalStructure, new Point(-1, -1),2)*/;
+    	
+    	/*Mat edges = imglines;
+    	Imgproc.adaptiveThreshold(vertical, edges, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 3, -2);
+    	Mat kernel = Mat.ones(2, 2, CvType.CV_8UC1);
+    	Imgproc.dilate(edges, edges, kernel);
+    	Mat smooth = edges;
+    	vertical.copyTo(smooth);
+    	Imgproc.blur(smooth, smooth,new Size(2, 2));
+    	smooth.copyTo(vertical, edges);*/
+    	
+    	String _path = DATA_PATH + "/ocr_vertical.png";
+    	File file = new File(_path);
+    	Bitmap bitmap = Bitmap.createBitmap(verticalStructure.cols(),verticalStructure.rows(),Bitmap.Config.ARGB_8888);
+    	Utils.matToBitmap(verticalStructure, bitmap);
+       	/*Debug*/
+    	try {
+			OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+			bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
+			os.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    	return vertical;
     }
     
     private List<MatOfPoint> findSquares (Mat inputImage)
