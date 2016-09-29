@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -198,13 +199,15 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     		
     		for (MatOfPoint p :squares)
     		{
-    			 Log.i(TAG, "With: "+p.elemSize()+" Height: "+p.dims());
+    			 Log.i(TAG, "SIZE: "+p.size()+" Element Size: "+p.elemSize());
+    			 
+    			 Mat imageROI = image.submat(Imgproc.boundingRect(p));
+    			 Log.i(TAG, "Image H: "+imageROI.height()+" Image W: "+imageROI.width());
     			
-    			if ((/*p.height()<=400 &&*/ p.height()>=400)  && (/*p.width()<=900 &&*/ p.width()>=150)){
+    			if ((imageROI.height()<=400 && imageROI.height()>=50)  && (imageROI.width()<=900 && imageROI.width()>=150)){
     				List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
     				listaux.add(p);
-    				Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR);
-    				Mat imageROI = image.submat(Imgproc.boundingRect(p));
+    				Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR,2);
     				imageROI = prepareImage4OCR(imageROI);        		
 
 
@@ -263,7 +266,29 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	Imgproc.threshold(ret, ret, 124, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
     	Mat kernel = Mat.ones(new Size(5,5),CvType.CV_8U);
     	Imgproc.erode(ret, ret, kernel,new Point(),2);
+    	deskew(ret);
     	//ret = eliminateLines(ret);
+    	return ret;
+    }
+    
+    
+    private Mat deskew (Mat imginput)
+    {
+    	Mat ret = imginput.clone();
+    	Size size = imginput.size();
+    	Core.bitwise_not(imginput, ret);
+    	Point center = new Point(imginput.width()/2, imginput.height()/2);
+    	Mat lines = new Mat();
+    	Imgproc.HoughLinesP(ret, lines, 1, Math.PI / 180,100,size.width/ 2.f,20);
+    	double angle = 0;
+    	for (int i= 0; i<lines.height(); i++){
+    		for (int j= 0; j<lines.width(); j++) {
+    			angle += Math.atan2(lines.get(i, j)[3] - lines.get(i, j)[1], lines.get(i, j)[2] - lines.get(i, j)[0]);
+    		}
+    	}
+        angle /= lines.size().area();
+        angle = angle * 180 / Math.PI;
+    	ret = Imgproc.getRotationMatrix2D(center, angle, 1.0);
     	return ret;
     }
     
