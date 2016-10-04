@@ -41,6 +41,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.media.MediaBrowserCompat.MediaItem.Flags;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -182,7 +183,7 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	/*Imgproc.rectangle(img, new Point(100,100), new Point(300,300), FACE_RECT_COLOR, 3);
         return img;*/
 
-    	if (Math.random()>0.95) {
+    	if (Math.random()>0.90) {
 
     		squares=findSquares(inputFrame.rgba().clone());
 
@@ -199,16 +200,16 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     		
     		for (MatOfPoint p :squares)
     		{
-    			 Log.i(TAG, "SIZE: "+p.size()+" Element Size: "+p.elemSize());
+    			 //Log.i(TAG, "SIZE: "+p.size()+" Element Size: "+p.elemSize());
     			 
     			 Mat imageROI = image.submat(Imgproc.boundingRect(p));
-    			 Log.i(TAG, "Image H: "+imageROI.height()+" Image W: "+imageROI.width());
+    			 //Log.i(TAG, "Image H: "+imageROI.height()+" Image W: "+imageROI.width());
     			
     			if ((imageROI.height()<=400 && imageROI.height()>=50)  && (imageROI.width()<=900 && imageROI.width()>=150)){
     				List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
     				listaux.add(p);
-    				Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR,2);
     				imageROI = prepareImage4OCR(imageROI);        		
+    				Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR,2);
 
 
     				BitmapFactory.Options options = new BitmapFactory.Options();
@@ -263,10 +264,11 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	Mat ret = rgb;
     	Imgproc.medianBlur(rgb, rgb, 5); //Smoooth filter 
     	Imgproc.cvtColor(rgb, ret, Imgproc.COLOR_RGBA2GRAY);
-    	Imgproc.threshold(ret, ret, 124, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
+    	Imgproc.threshold(ret, ret, 127, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
     	Mat kernel = Mat.ones(new Size(5,5),CvType.CV_8U);
+    	ret= deskew(ret);
     	Imgproc.erode(ret, ret, kernel,new Point(),2);
-    	deskew(ret);
+    	
     	//ret = eliminateLines(ret);
     	return ret;
     }
@@ -286,9 +288,12 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     			angle += Math.atan2(lines.get(i, j)[3] - lines.get(i, j)[1], lines.get(i, j)[2] - lines.get(i, j)[0]);
     		}
     	}
+    	
         angle /= lines.size().area();
         angle = angle * 180 / Math.PI;
-    	ret = Imgproc.getRotationMatrix2D(center, angle, 1.0);
+        Log.v(TAG, "ANGLE " + angle );
+    	Mat rotation = Imgproc.getRotationMatrix2D(center, angle, 1.0);
+    	Imgproc.warpAffine(imginput, ret, rotation, size);
     	return ret;
     }
     
