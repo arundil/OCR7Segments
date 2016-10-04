@@ -268,8 +268,8 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     	Mat kernel = Mat.ones(new Size(5,5),CvType.CV_8U);
     	ret= deskew(ret);
     	Imgproc.erode(ret, ret, kernel,new Point(),2);
+    	eliminateLines(ret);
     	
-    	//ret = eliminateLines(ret);
     	return ret;
     }
     
@@ -299,34 +299,41 @@ public class OCR7SegementActivity extends Activity implements CvCameraViewListen
     
     private Mat eliminateLines (Mat imglines)
     {
-        Mat horizontal = imglines.clone();
-        Mat vertical = imglines.clone();
         
-    	int verticalsize = vertical.rows() / 30;
-    	int horizontalsize = horizontal.cols() / 30;
+        Mat bw = new Mat();
+        Imgproc.threshold(imglines, bw, 127, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
+        
+        Mat horizontal = bw.clone();
+        Mat vertical = bw.clone();
+        
+        int verticalsize = vertical.rows() / 30;
+        int horizontalsize = horizontal.cols() / 30;
+        
+    	Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,  new Size(15,verticalsize));
+    	Mat horizontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(horizontalsize,15));
     	
-    	Mat verticalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT,  new Size(1,verticalsize));
-    	Mat horizontalStructure = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(horizontalsize,1));
     	
-    	/*Imgproc.erode(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
-    	Imgproc.dilate(horizontal, horizontal, horizontalStructure, new Point(-1, -1),2);
     	
-    	Imgproc.erode(vertical, vertical, verticalStructure, new Point(-1, -1),2);
-    	Imgproc.dilate(vertical, vertical, verticalStructure, new Point(-1, -1),2)*/;
+    	Imgproc.erode(horizontal, horizontal, horizontalStructure, new Point(-1, -1),1);
+    	Imgproc.dilate(horizontal, horizontal, horizontalStructure, new Point(-1, -1),1);
     	
-    	/*Mat edges = imglines;
-    	Imgproc.adaptiveThreshold(vertical, edges, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 3, -2);
-    	Mat kernel = Mat.ones(2, 2, CvType.CV_8UC1);
-    	Imgproc.dilate(edges, edges, kernel);
-    	Mat smooth = edges;
-    	vertical.copyTo(smooth);
-    	Imgproc.blur(smooth, smooth,new Size(2, 2));
-    	smooth.copyTo(vertical, edges);*/
+    	Imgproc.erode(vertical, vertical, verticalStructure, new Point(-1, -1),1);
+    	Imgproc.dilate(vertical, vertical, verticalStructure, new Point(-1, -1),1);
     	
-    	String _path = DATA_PATH + "/ocr_vertical.png";
+    	Mat kernel = Mat.ones(15, 15, CvType.CV_8UC1);
+    	Mat edges = new Mat();
+    	//Imgproc.adaptiveThreshold(vertical, edges, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 3, -2);
+    	//Imgproc.dilate(edges, edges, kernel);
+        Mat smooth = new Mat();
+        vertical.copyTo(smooth);
+        Imgproc.blur(smooth, smooth,new Size(2, 2));
+        smooth.copyTo(vertical, edges);
+        Imgproc.threshold(vertical, vertical, 127, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
+    	
+    	String _path = DATA_PATH + "/bw.png";
     	File file = new File(_path);
-    	Bitmap bitmap = Bitmap.createBitmap(verticalStructure.cols(),verticalStructure.rows(),Bitmap.Config.ARGB_8888);
-    	Utils.matToBitmap(verticalStructure, bitmap);
+    	Bitmap bitmap = Bitmap.createBitmap(vertical.cols(),vertical.rows(),Bitmap.Config.ARGB_8888);
+    	Utils.matToBitmap(vertical, bitmap);
        	/*Debug*/
     	try {
 			OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
