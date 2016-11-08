@@ -33,10 +33,11 @@ public class OCR7SegmentDictionaryImpl implements OCR7SegmentDictionary {
 		
 		dictionary.put("1200", 0);
 		dictionary.put("1400", 0);
-		dictionary.put("1800", 0);
+		dictionary.put("1600", 0);
 		dictionary.put("1800", 0);
 		dictionary.put("2000", 0);
 		dictionary.put("800", 0);
+		dictionary.put("600", 0);
 		dictionary.put("400", 0);
 		dictionary.put("200", 0);
 		dictionary.put("60", 0);

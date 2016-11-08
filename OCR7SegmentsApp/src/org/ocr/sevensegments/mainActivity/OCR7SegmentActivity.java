@@ -272,7 +272,8 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 					TessBaseAPI baseApi = new TessBaseAPI();
 					baseApi.setDebug(true);
 					baseApi.init(DATA_PATH, lang);
-					baseApi.setImage(file);
+					baseApi.setImage(bitmap);
+					//baseApi.setImage(file);
 
 					final String recognizedText = baseApi.getUTF8Text();
 					dictionary.UpdateElement(recognizedText, 1);
@@ -310,7 +311,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 		OCR7SegmentImageEnhacement OCRImage = new OCR7SegmentImageEnhacementImpl();
 		Mat ret = rgb.clone();
 		Imgproc.cvtColor(ret, ret, Imgproc.COLOR_RGBA2GRAY);
-		Imgproc.threshold(ret, ret, 127, 255, Imgproc.THRESH_BINARY_INV); //Threshold put to 127 over 255
+		Imgproc.threshold(ret, ret, 0, 255, Imgproc.THRESH_BINARY_INV | Imgproc.THRESH_OTSU); //Threshold put to 127 over 255
 		Mat kernel = Mat.ones(new Size(2,2),CvType.CV_8U);
 		Imgproc.medianBlur(ret, ret, 5); //Smoooth filter 
 		ret= OCRImage.deskew(ret);
@@ -320,6 +321,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 		int rows_to_remove = (int) (ret.rows()*0.05);
 		Mat retfinal= ret.submat(rows_to_remove, ret.rows()-rows_to_remove, cols_to_remove, ret.cols()-cols_to_remove);
 		Imgproc.erode(retfinal, retfinal, kernel,new Point(),1);
+		
 
 		return retfinal;
 	}
@@ -330,6 +332,12 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 		textToSpeech.speak( str, TextToSpeech.QUEUE_FLUSH, null );
 		textToSpeech.setSpeechRate( 0.0f );
 		textToSpeech.setPitch( 0.0f );
+	}
+	
+	private Integer optimalThreshold (Mat imame)
+	{
+		
+		return 0;
 	}
 
 }
