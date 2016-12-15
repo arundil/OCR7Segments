@@ -23,12 +23,9 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -47,7 +44,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -68,8 +64,6 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
 
 	private CameraBridgeViewBase mOpenCvCameraView;
-	private boolean              mIsJavaCamera = true;
-	private MenuItem             mItemSwitchCamera = null;
 
 	int thresh = 50, N = 5;
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
