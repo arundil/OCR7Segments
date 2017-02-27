@@ -30,17 +30,20 @@ import com.app.gokitchen.util.OCR7SegmentDictionary;
 import com.app.gokitchen.util.OCR7SegmentDictionaryImpl;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -49,14 +52,14 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 	private static final String TAG = "OCVSample::Activity";
 	private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
-	private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/SimpleAndroidOCR/";
+	private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/GoKitchen/";
 	private static final String lang = "7seg";
 	protected EditText _field;
 	private TextToSpeech textToSpeech;
 	private OCR7SegmentDictionary dictionary = new OCR7SegmentDictionaryImpl();
 	List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
 	private CameraBridgeViewBase mOpenCvCameraView;
-	
+	Boolean reiniciarApp = false;
 	int thresh = 50, N = 5;
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
@@ -93,10 +96,31 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		setContentView(R.layout.activity_ocr);
 
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surface_view);
-
-		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+		
+		mOpenCvCameraView.setVisibility(View.VISIBLE);
 
 		mOpenCvCameraView.setCvCameraViewListener(this);
+
+		/*Check the permissions, in case any were not set, set it and reboot the activity*/
+		
+		if (ContextCompat.checkSelfPermission(OCRActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(OCRActivity.this,
+	                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+	                1);
+			reiniciarApp = true;
+
+		}
+		
+		if (ContextCompat.checkSelfPermission(OCRActivity.this,
+                Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(OCRActivity.this,
+	                new String[]{Manifest.permission.CAMERA},
+	                1);
+			reiniciarApp = true;
+		}
 
 
 		//Tesseract treatment
@@ -145,6 +169,9 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 		dictionary.fillDictionary();	
 		speak("Cargada interfaz de voz a español");
+		
+		if(reiniciarApp)
+			OCRActivity.this.finish();
 	}
 	
 
@@ -178,6 +205,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		}
 	}
 
+	@Override
 	public void onDestroy() {
 
 		if (mOpenCvCameraView != null)
@@ -191,12 +219,6 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		super.onDestroy();
 	}
 
-	public void onCameraViewStarted(int width, int height) {
-	}
-
-	public void onCameraViewStopped() {
-	}
-
 	
 	/*===========================================
 	 * Mat onCameraFrame (non-Javadoc)
@@ -206,6 +228,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	 */
 
 	
+	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
 
@@ -320,11 +343,17 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		textToSpeech.setSpeechRate( 0.0f );
 		textToSpeech.setPitch( 0.0f );
 	}
-	
-	private Integer optimalThreshold (Mat imame)
-	{
+
+	@Override
+	public void onCameraViewStarted(int width, int height) {
+		// TODO Auto-generated method stub
 		
-		return 0;
+	}
+
+	@Override
+	public void onCameraViewStopped() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
