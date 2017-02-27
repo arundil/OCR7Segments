@@ -1,9 +1,13 @@
 package com.app.gokitchen;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class MainActivity extends Activity {
 
@@ -11,6 +15,19 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Button ocrActivation = (Button) findViewById(R.id.ActivateOCR);
+		
+		ocrActivation.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Intent OCRIntent = new Intent().setClass(
+                        MainActivity.this, OCRActivity.class);
+                startActivity(OCRIntent);
+			}
+		});
 	}
 
 	@Override
@@ -26,9 +43,15 @@ public class MainActivity extends Activity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_buttons) {
+			//Aqui se debe programar el menu
+			return true;
+		}
+		if (id == R.id.action_gesture) {
+			//Aqui se debe programar el otro menú
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 }
