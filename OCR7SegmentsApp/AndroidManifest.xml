@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.ocr.sevensegments.sample1"
+          package="org.ocr.sevensegments.mainActivity"
           android:versionCode="301"
           android:versionName="3.01">
 
@@ -9,7 +9,7 @@
         android:icon="@drawable/icon"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
 
-        <activity android:name="OCR7SegementActivity"
+        <activity android:name="org.ocr.sevensegments.mainActivity.OCR7SegmentActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="landscape"
                   android:configChanges="keyboardHidden|orientation">
