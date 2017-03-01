@@ -18,6 +18,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -32,6 +33,7 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -42,7 +44,6 @@ import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -87,6 +88,8 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "called onCreate");
 		super.onCreate(savedInstanceState);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		textToSpeech = new TextToSpeech( this, this );
@@ -230,18 +233,32 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	
 	@Override
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-
+		
+		
+		Mat image = inputFrame.rgba();
+		
+		// Now the application will only works in Portrait mode. So we need to rotate the image due the configuration in OpenCV
+		Mat mRgbaT = image.t();
+		Core.flip(image.t(), mRgbaT, 1);
+		Float resolution = (float) (image.size().width/image.size().height);
+		Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
+		Log.i(TAG, "RESOLUTION: "+resolution);
+		Size s = new Size((image.size().width/4), (image.size().height/resolution));
+		Imgproc.resize(mRgbaT, mRgbaT,image.size());
+		
+		image = mRgbaT.clone();
 
 		OCR7SegmentRoiDetection RoiDetection = new OCR7SegmentRoiDetectionImpl();
 
 		if (Math.random()>0.90) {
 
-			squares=RoiDetection.findSquares(inputFrame.rgba().clone());
+			squares=RoiDetection.findSquares(image.clone());
 
 		}
-
-		Mat image = inputFrame.rgba();
-
+		
+		//ImputImage of each frame coming from the camera.
+		
+		//Here we draw the squares (blue ones) for each ROI that we detect.
 		Imgproc.drawContours(image, squares, -1, new Scalar(0,0,255));
 
 		if (!squares.isEmpty())
@@ -312,6 +329,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 				}
 			}
 		}
+		
 		return image;
 	}
 
