@@ -243,9 +243,8 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		Float resolution = (float) (image.size().width/image.size().height);
 		Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
 		Log.i(TAG, "RESOLUTION: "+resolution);
-		Size s = new Size((image.size().width/4), (image.size().height/resolution));
+		Size s = new Size(image.size().width/resolution, (image.size().height));
 		Imgproc.resize(mRgbaT, mRgbaT,image.size());
-		
 		image = mRgbaT.clone();
 
 		OCR7SegmentRoiDetection RoiDetection = new OCR7SegmentRoiDetectionImpl();
