@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -38,6 +40,8 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.hardware.camera2.CameraDevice;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -100,8 +104,9 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surface_view);
 		
+		
 		mOpenCvCameraView.setVisibility(View.VISIBLE);
-
+		
 		mOpenCvCameraView.setCvCameraViewListener(this);
 
 		/*Check the permissions, in case any were not set, set it and reboot the activity*/
@@ -235,17 +240,17 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 		
 		
-		Mat image = inputFrame.rgba();
+	    Mat image = inputFrame.rgba();
+
+	    //The Image is rotate to work in Portrait mode. 
+	    Mat rotImage = Imgproc.getRotationMatrix2D(new Point(image.cols() / 2,
+	    		image.rows() / 2), 270, 1.0);
+
+	    Imgproc.warpAffine(image, image, rotImage, image.size());
+	
 		
 		// Now the application will only works in Portrait mode. So we need to rotate the image due the configuration in OpenCV
-		Mat mRgbaT = image.t();
-		Core.flip(image.t(), mRgbaT, 1);
-		Float resolution = (float) (image.size().width/image.size().height);
-		Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
-		Log.i(TAG, "RESOLUTION: "+resolution);
-		Size s = new Size(image.size().width/resolution, (image.size().height));
-		Imgproc.resize(mRgbaT, mRgbaT,image.size());
-		image = mRgbaT.clone();
+		
 
 		OCR7SegmentRoiDetection RoiDetection = new OCR7SegmentRoiDetectionImpl();
 
@@ -269,7 +274,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 			{
 
 				Mat imageROI = image.submat(Imgproc.boundingRect(p));
-
+				//TODO Fix the detection of squares & histogram. 
 				if ((imageROI.height()<=400 && imageROI.height()>=50)  && (imageROI.width()<=900 && imageROI.width()>=150)) {
 
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
@@ -285,7 +290,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 					Utils.matToBitmap(imageROI_prepared, bitmap);
 					String _path = DATA_PATH + "/ocr.png";
 					File file = new File(_path);
-					/*Debug*/
+					//Debug//
 					try {
 						OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
 						bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
@@ -372,5 +377,6 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		// TODO Auto-generated method stub
 		
 	}
+
 
 }
