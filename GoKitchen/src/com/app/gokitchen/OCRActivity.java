@@ -103,7 +103,9 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		setContentView(R.layout.activity_ocr);
 
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surface_view);
+		/*Set the resolution to the lowest supported*/
 		
+		mOpenCvCameraView.setMaxFrameSize(352, 288);
 		
 		mOpenCvCameraView.setVisibility(View.VISIBLE);
 		
@@ -275,7 +277,13 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 				Mat imageROI = image.submat(Imgproc.boundingRect(p));
 				//TODO Fix the detection of squares & histogram. 
-				if ((imageROI.height()<=400 && imageROI.height()>=50)  && (imageROI.width()<=900 && imageROI.width()>=150)) {
+				//Calculate the resolution of every photogram
+				int resolution  = image.width()/image.height();
+				
+				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
+				Log.i(TAG, "RESOLUTION: "+resolution);
+				
+				if ((imageROI.height()<=75 && imageROI.height()>=15)  && (imageROI.width()<=250 && imageROI.width()>=50)) {
 
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
 					listaux.add(p);
@@ -292,7 +300,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 					File file = new File(_path);
 					//Debug//
 					try {
-						OutputStream os = new BufferedOutputStream(new FileOutputStream(file));
+						OutputStream os = new BufferedOutputStream(new FileOutputStream(file ));
 						bitmap.compress(Bitmap.CompressFormat.PNG, 0, os);
 						os.close();
 
