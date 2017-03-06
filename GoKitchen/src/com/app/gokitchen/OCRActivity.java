@@ -22,6 +22,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -105,7 +106,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surface_view);
 		/*Set the resolution to the lowest supported*/
 		
-		mOpenCvCameraView.setMaxFrameSize(352, 288);
+		mOpenCvCameraView.setMaxFrameSize(640, 480);
 		
 		mOpenCvCameraView.setVisibility(View.VISIBLE);
 		
@@ -308,12 +309,23 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 						e.printStackTrace();
 					}
 
+					//As a last filter, we should have a look how the histogram looks like.
+					//Too white or dark images must be rejected.Histogram should be centered in frequency.
+					/*Mat histogram = new Mat();
+					float range[] = { 0, 256 };
+					MatOfInt histSize = new MatOfInt();
+					histSize.
+					Imgproc.calcHist(image, 0, new Mat(), histogram, 256, range);*/
+					
+					// Tesseract Part
+					
 					TessBaseAPI baseApi = new TessBaseAPI();
 					baseApi.setDebug(true);
 					baseApi.init(DATA_PATH, lang);
 					baseApi.setImage(bitmap);
 					//baseApi.setImage(file);
-
+					
+					//Printing the result in the GUI
 					final String recognizedText = baseApi.getUTF8Text();
 					dictionary.UpdateElement(recognizedText, 1);
 					baseApi.end();
@@ -323,7 +335,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 						this.runOnUiThread(new Runnable() {
 
 							@Override
-							public void run() {
+							public void run() { //GUI thread
 								_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
 								_field.setSelection(_field.getText().toString().length());
 								textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
