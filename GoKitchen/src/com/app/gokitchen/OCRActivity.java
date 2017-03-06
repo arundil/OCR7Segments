@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +21,10 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -41,8 +40,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraDevice;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -283,9 +281,23 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 				
 				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
 				Log.i(TAG, "RESOLUTION: "+resolution);
+				double reductionFactorW = 1;
+				double reductionFactorH = 1; 
 				
-				if ((imageROI.height()<=75 && imageROI.height()>=15)  && (imageROI.width()<=250 && imageROI.width()>=50)) {
-
+				if (image.size().width ==352 && image.height() == 288)
+				{
+					reductionFactorW = 1.82;
+					reductionFactorH = 1.68;
+				}
+				
+				//The square should not be large than 380x95 and bigger than 172x44 in resolution 640x480. if resolution is 352x288, I apply a reduction factor.
+				//Remember than height and with is inverted in Portrait mode for the input image.
+				
+				if (((imageROI.height()<=(172/reductionFactorH) && (imageROI.height()>=(44/reductionFactorH))))
+						&& (((imageROI.width()<=(380/reductionFactorW)) && (imageROI.width()>=(95/reductionFactorW))))) {
+					
+					Log.i(TAG, "WROI: "+imageROI.size().width+" HROI: "+imageROI.size().height);
+					
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
 					listaux.add(p);
 					Mat imageROI_prepared = prepareImage4OCR(imageROI,p);        		
@@ -311,45 +323,82 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 					//As a last filter, we should have a look how the histogram looks like.
 					//Too white or dark images must be rejected.Histogram should be centered in frequency.
-					/*Mat histogram = new Mat();
-					float range[] = { 0, 256 };
-					MatOfInt histSize = new MatOfInt();
-					histSize.
-					Imgproc.calcHist(image, 0, new Mat(), histogram, 256, range);*/
+					/*List<Mat> list_img = new ArrayList<Mat>();
+					list_img.add(imageROI_prepared);
+					MatOfInt channels = new MatOfInt(0);
+					Mat histogram = new Mat();
+					MatOfInt hist_size = new MatOfInt(256);
+					MatOfFloat ranges = new MatOfFloat(0f,1f);
+					Imgproc.calcHist(list_img, channels, new Mat(), histogram, hist_size, ranges);
+					Core.normalize(histogram, histogram, imageROI_prepared.height(), 0, Core.NORM_INF);
+					
+					Mat histMatBitmap = new Mat(imageROI_prepared.size(),imageROI_prepared.type());
+					
+					for (int j = 0; j < 256; j++) {
+						Point p1 = new Point(5 * (j - 1), imageROI_prepared.height() - Math.round(histogram.get(j - 1, 0)[0]));
+						Point p2 = new Point(5 * j, imageROI_prepared.height() - Math.round(histogram.get(j, 0)[0]));
+						Imgproc.line(histMatBitmap, p1, p2, new Scalar(0, 0, 0, 255),2,8,0);
+					}*/
+					
+					int WhitePixels = Core.countNonZero(imageROI_prepared);
+					float numOfPixels = imageROI_prepared.height() * imageROI_prepared.width();
+					
+					double avarageOfWhitePixels = (WhitePixels/numOfPixels)*100;
+					
+					
+					Log.d(TAG, "WhitePixels: " + WhitePixels);
+					Log.d(TAG, "Average: " + avarageOfWhitePixels);
+					
+					/*Bitmap bitmap2 = Bitmap.createBitmap(histMatBitmap.cols(),histMatBitmap.rows(),Bitmap.Config.ARGB_8888);
+					Utils.matToBitmap(histMatBitmap, bitmap2);
+					_path = DATA_PATH + "/histograma.png";
+					file = new File(_path);
+					//Debug//
+					try {
+						OutputStream os = new BufferedOutputStream(new FileOutputStream(file ));
+						bitmap2.compress(Bitmap.CompressFormat.PNG, 0, os);
+						os.close();
+
+					} catch (IOException e) {
+						e.printStackTrace();
+					}*/
+					
 					
 					// Tesseract Part
 					
-					TessBaseAPI baseApi = new TessBaseAPI();
-					baseApi.setDebug(true);
-					baseApi.init(DATA_PATH, lang);
-					baseApi.setImage(bitmap);
-					//baseApi.setImage(file);
-					
-					//Printing the result in the GUI
-					final String recognizedText = baseApi.getUTF8Text();
-					dictionary.UpdateElement(recognizedText, 1);
-					baseApi.end();
+					if (avarageOfWhitePixels > 70) {
+						TessBaseAPI baseApi = new TessBaseAPI();
+						baseApi.setDebug(true);
+						baseApi.init(DATA_PATH, lang);
+						baseApi.setImage(bitmap);
+						//baseApi.setImage(file);
 
-					if ( recognizedText.length() != 0 ) {
+						//Printing the result in the GUI
+						final String recognizedText = baseApi.getUTF8Text();
+						dictionary.UpdateElement(recognizedText, 1);
+						baseApi.end();
 
-						this.runOnUiThread(new Runnable() {
+						if ( recognizedText.length() != 0 ) {
 
-							@Override
-							public void run() { //GUI thread
-								_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-								_field.setSelection(_field.getText().toString().length());
-								textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-								//speak( _field.getText().toString() );
-								String value = dictionary.evaluateDictionary();
-								if (!value.equals("")){
-									speak(value);
-									dictionary.restartDictionary();
+							this.runOnUiThread(new Runnable() {
+
+								@Override
+								public void run() { //GUI thread
+									_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
+									_field.setSelection(_field.getText().toString().length());
+									textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+									//speak( _field.getText().toString() );
+									String value = dictionary.evaluateDictionary();
+									if (!value.equals("")){
+										speak(value);
+										dictionary.restartDictionary();
+									}
 								}
-							}
-						});
+							});
 
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
