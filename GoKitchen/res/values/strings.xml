@@ -2,12 +2,14 @@
 <resources>
     <string name="app_name">GoKitchen</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_buttons">Modo Con Botones</string>
-    <string name="action_gesture">Modo Accesibilidad</string>
+    <string name="action_buttons">Buttons mode</string>
+    <string name="action_gesture">Accesibility mode</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_ocr">OCRActivity</string>
-    <string name="text_hint">El texto aparecerá aquí</string>
+    <string name="title_activity_ocr">Reading out the display...</string>
+    <string name="text_hint">The text will appear here...</string>
+    <string name="textButtonOCR">Read out hob displays value</string>
+    <string name="ocr">OCR</string>
 </resources>

@@ -1,5 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
     <string name="ocr">OCR</string>
     <string name="textButtonOCR">Leer Display Vitrocerámica</string>
+    <string name="text_hint">El texto aparecerá aquí</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_ocr">Leyendo con la cámara el display...</string>
+    <string name="app_name">GoKitchen</string>
+    <string name="action_gesture">Modo Accesibilidad</string>
+    <string name="action_settings">Propiedades</string>
+    <string name="action_buttons">Modo Con Botones</string>
 </resources>
