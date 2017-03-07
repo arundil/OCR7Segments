@@ -275,7 +275,6 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 			{
 
 				Mat imageROI = image.submat(Imgproc.boundingRect(p));
-				//TODO Fix the detection of squares & histogram. 
 				//Calculate the resolution of every photogram
 				int resolution  = image.width()/image.height();
 				
@@ -323,22 +322,6 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 					//As a last filter, we should have a look how the histogram looks like.
 					//Too white or dark images must be rejected.Histogram should be centered in frequency.
-					/*List<Mat> list_img = new ArrayList<Mat>();
-					list_img.add(imageROI_prepared);
-					MatOfInt channels = new MatOfInt(0);
-					Mat histogram = new Mat();
-					MatOfInt hist_size = new MatOfInt(256);
-					MatOfFloat ranges = new MatOfFloat(0f,1f);
-					Imgproc.calcHist(list_img, channels, new Mat(), histogram, hist_size, ranges);
-					Core.normalize(histogram, histogram, imageROI_prepared.height(), 0, Core.NORM_INF);
-					
-					Mat histMatBitmap = new Mat(imageROI_prepared.size(),imageROI_prepared.type());
-					
-					for (int j = 0; j < 256; j++) {
-						Point p1 = new Point(5 * (j - 1), imageROI_prepared.height() - Math.round(histogram.get(j - 1, 0)[0]));
-						Point p2 = new Point(5 * j, imageROI_prepared.height() - Math.round(histogram.get(j, 0)[0]));
-						Imgproc.line(histMatBitmap, p1, p2, new Scalar(0, 0, 0, 255),2,8,0);
-					}*/
 					
 					int WhitePixels = Core.countNonZero(imageROI_prepared);
 					float numOfPixels = imageROI_prepared.height() * imageROI_prepared.width();
@@ -348,21 +331,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 					
 					Log.d(TAG, "WhitePixels: " + WhitePixels);
 					Log.d(TAG, "Average: " + avarageOfWhitePixels);
-					
-					/*Bitmap bitmap2 = Bitmap.createBitmap(histMatBitmap.cols(),histMatBitmap.rows(),Bitmap.Config.ARGB_8888);
-					Utils.matToBitmap(histMatBitmap, bitmap2);
-					_path = DATA_PATH + "/histograma.png";
-					file = new File(_path);
-					//Debug//
-					try {
-						OutputStream os = new BufferedOutputStream(new FileOutputStream(file ));
-						bitmap2.compress(Bitmap.CompressFormat.PNG, 0, os);
-						os.close();
 
-					} catch (IOException e) {
-						e.printStackTrace();
-					}*/
-					
 					
 					// Tesseract Part
 					
