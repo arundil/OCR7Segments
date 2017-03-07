@@ -23,6 +23,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -36,13 +37,17 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -60,6 +65,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	protected EditText _field;
 	private TextToSpeech textToSpeech;
 	private OCR7SegmentDictionary dictionary = new OCR7SegmentDictionaryImpl();
+	Boolean rebootapp = false;
 
 	List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
 
@@ -99,13 +105,36 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 
 
 		setContentView(R.layout.tutorial1_surface_view);
-
+		
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
+		//Set the resolution max to 640x360		
+
+		mOpenCvCameraView.setMaxFrameSize(640, 360);
 
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
 		mOpenCvCameraView.setCvCameraViewListener(this);
 
+		/*Check the permissions, in case any were not set, set it and reboot the activity*/
+		if (ContextCompat.checkSelfPermission(OCR7SegmentActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(OCR7SegmentActivity.this,
+	                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+	                1);
+			rebootapp = true;
+
+		}
+		
+		if (ContextCompat.checkSelfPermission(OCR7SegmentActivity.this,
+                Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(OCR7SegmentActivity.this,
+	                new String[]{Manifest.permission.CAMERA},
+	                1);
+			rebootapp = true;
+		}
+		
 
 		//Tesseract treatment
 		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
@@ -153,6 +182,9 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 
 		dictionary.fillDictionary();	
 		speak("Cargada interfaz de voz a español");
+		
+		if(rebootapp)
+			OCR7SegmentActivity.this.finish();
 	}
 
 	@Override
@@ -215,6 +247,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
+		
 
 		OCR7SegmentRoiDetection RoiDetection = new OCR7SegmentRoiDetectionImpl();
 
@@ -225,7 +258,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 		}
 
 		Mat image = inputFrame.rgba();
-
+				
 		Imgproc.drawContours(image, squares, -1, new Scalar(0,0,255));
 
 		if (!squares.isEmpty())
@@ -235,10 +268,25 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 
 			for (MatOfPoint p :squares)
 			{
-
+				
 				Mat imageROI = image.submat(Imgproc.boundingRect(p));
 
-				if ((imageROI.height()<=400 && imageROI.height()>=50)  && (imageROI.width()<=900 && imageROI.width()>=150)) {
+				//Calculate the resolution of every photogram
+				int resolution  = image.width()/image.height();
+				
+				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
+				Log.i(TAG, "RESOLUTION: "+resolution);
+				double reductionFactorW = 1;
+				double reductionFactorH = 1; 
+				
+				if (image.size().width ==352 && image.height() == 288)
+				{
+					reductionFactorW = 1.82;
+					reductionFactorH = 1.68;
+				}
+				
+				if (((imageROI.height()<=(172/reductionFactorH) && (imageROI.height()>=(44/reductionFactorH))))
+						&& (((imageROI.width()<=(380/reductionFactorW)) && (imageROI.width()>=(95/reductionFactorW))))) {
 
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
 					listaux.add(p);
@@ -263,36 +311,50 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 						e.printStackTrace();
 					}
 
-					TessBaseAPI baseApi = new TessBaseAPI();
-					baseApi.setDebug(true);
-					baseApi.init(DATA_PATH, lang);
-					baseApi.setImage(bitmap);
-					//baseApi.setImage(file);
-
-					final String recognizedText = baseApi.getUTF8Text();
-					dictionary.UpdateElement(recognizedText, 1);
-					baseApi.end();
-
-					if ( recognizedText.length() != 0 ) {
-
-						this.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
-								_field.setSelection(_field.getText().toString().length());
-								textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-								//speak( _field.getText().toString() );
-								String value = dictionary.evaluateDictionary();
-								if (!value.equals("")){
-									speak(value);
-									dictionary.restartDictionary();
+					//As a last filter, we should have a look how the histogram looks like.
+					//Too white or dark images must be rejected.Histogram should be centered in frequency.
+					
+					int WhitePixels = Core.countNonZero(imageROI_prepared);
+					float numOfPixels = imageROI_prepared.height() * imageROI_prepared.width();
+					
+					double avarageOfWhitePixels = (WhitePixels/numOfPixels)*100;
+					
+					
+					Log.d(TAG, "WhitePixels: " + WhitePixels);
+					Log.d(TAG, "Average: " + avarageOfWhitePixels);
+					
+					if (avarageOfWhitePixels > 70) {
+						TessBaseAPI baseApi = new TessBaseAPI();
+						baseApi.setDebug(true);
+						baseApi.init(DATA_PATH, lang);
+						baseApi.setImage(bitmap);
+						//baseApi.setImage(file);
+						
+						final String recognizedText = baseApi.getUTF8Text();
+						dictionary.UpdateElement(recognizedText, 1);
+						baseApi.end();
+						
+						if ( recognizedText.length() != 0 ) {
+							
+							this.runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
+									_field.setSelection(_field.getText().toString().length());
+									textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+									//speak( _field.getText().toString() );
+									String value = dictionary.evaluateDictionary();
+									if (!value.equals("")){
+										speak(value);
+										dictionary.restartDictionary();
+									}
 								}
-							}
-						});
-
+							});
+							
+						}
+						break;
 					}
-					break;
 				}
 			}
 		}
