@@ -12,4 +12,5 @@
     <string name="text_hint">The text will appear here...</string>
     <string name="textButtonOCR">Read out hob displays value</string>
     <string name="ocr">OCR</string>
+    <string name="title_activity_gesture">Place your gesture here</string>
 </resources>

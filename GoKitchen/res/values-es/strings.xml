@@ -9,4 +9,5 @@
     <string name="action_gesture">Modo Accesibilidad</string>
     <string name="action_settings">Propiedades</string>
     <string name="action_buttons">Modo Con Botones</string>
+    <string name="title_activity_gesture">Dibuje un trazo con el dedo...</string>
 </resources>
