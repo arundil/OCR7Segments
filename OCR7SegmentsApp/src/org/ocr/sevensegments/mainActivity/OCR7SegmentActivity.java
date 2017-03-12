@@ -48,7 +48,7 @@ import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+//import android.util.Log;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -66,6 +66,7 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	private TextToSpeech textToSpeech;
 	private OCR7SegmentDictionary dictionary = new OCR7SegmentDictionaryImpl();
 	Boolean rebootapp = false;
+	
 
 	List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
 
@@ -78,7 +79,8 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 			switch (status) {
 			case LoaderCallbackInterface.SUCCESS:
 			{
-				Log.i(TAG, "OpenCV loaded successfully");
+				
+				//Log.i(TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
 			} break;
 			default:
@@ -90,13 +92,13 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	};
 
 	public OCR7SegmentActivity() {
-		Log.i(TAG, "Instantiated new " + this.getClass());
+		//Log.i(TAG, "Instantiated new " + this.getClass());
 	}
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "called onCreate");
+		//Log.i(TAG, "called onCreate");
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -143,10 +145,10 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 			File dir = new File(path);
 			if (!dir.exists()) {
 				if (!dir.mkdirs()) {
-					Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
+					//Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
 					return;
 				} else {
-					Log.v(TAG, "Created directory " + path + " on sdcard");
+					//Log.v(TAG, "Created directory " + path + " on sdcard");
 				}
 			}
 
@@ -172,9 +174,9 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 				//gin.close();
 				out.close();
 
-				Log.v(TAG, "Copied " + lang + " traineddata");
+				//Log.v(TAG, "Copied " + lang + " traineddata");
 			} catch (IOException e) {
-				Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+				//Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
 			}
 		}
 
@@ -209,10 +211,10 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 	{
 		super.onResume();
 		if (!OpenCVLoader.initDebug()) {
-			Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+			//Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
 			OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
 		} else {
-			Log.d(TAG, "OpenCV library found inside package. Using it!");
+			//Log.d(TAG, "OpenCV library found inside package. Using it!");
 			mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 		}
 	}
@@ -274,8 +276,8 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 				//Calculate the resolution of every photogram
 				int resolution  = image.width()/image.height();
 				
-				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
-				Log.i(TAG, "RESOLUTION: "+resolution);
+				//Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
+				//Log.i(TAG, "RESOLUTION: "+resolution);
 				double reductionFactorW = 1;
 				double reductionFactorH = 1; 
 				
@@ -320,8 +322,8 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 					double avarageOfWhitePixels = (WhitePixels/numOfPixels)*100;
 					
 					
-					Log.d(TAG, "WhitePixels: " + WhitePixels);
-					Log.d(TAG, "Average: " + avarageOfWhitePixels);
+					//Log.d(TAG, "WhitePixels: " + WhitePixels);
+					//Log.d(TAG, "Average: " + avarageOfWhitePixels);
 					
 					if (avarageOfWhitePixels > 70) {
 						TessBaseAPI baseApi = new TessBaseAPI();
@@ -371,8 +373,8 @@ public class OCR7SegmentActivity extends Activity implements CvCameraViewListene
 		Mat kernel = Mat.ones(new Size(2,2),CvType.CV_8U);
 		Imgproc.medianBlur(ret, ret, 5); //Smoooth filter 
 		ret= OCRImage.deskew(ret);
-		Log.v(TAG, "rows " + ret.rows());
-		Log.v(TAG, "cols " + ret.cols());
+		//Log.v(TAG, "rows " + ret.rows());
+		//Log.v(TAG, "cols " + ret.cols());
 		int cols_to_remove = (int) (ret.cols()*0.05);
 		int rows_to_remove = (int) (ret.rows()*0.05);
 		Mat retfinal= ret.submat(rows_to_remove, ret.rows()-rows_to_remove, cols_to_remove, ret.cols()-cols_to_remove);
