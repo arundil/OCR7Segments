@@ -8,4 +8,5 @@ The best way to work with this source code is downloading Eclipse for Android de
 
 Android SDK supported between 8 and and 23. Anyways, it is recommended to use as minimum SDK 14 or upper.
 
-
+The android app is now in google play. You can install clicking the following link:
+https://play.google.com/store/apps/details?id=org.ocr.sevensegments.mainActivity
