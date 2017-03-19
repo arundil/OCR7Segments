@@ -356,7 +356,6 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 									_field.setText(_field.getText().toString().length() == 0 ? recognizedText : recognizedText);
 									_field.setSelection(_field.getText().toString().length());
 									textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-									//speak( _field.getText().toString() );
 									String value = dictionary.evaluateDictionary();
 									if (!value.equals("")){
 										speak(value);
