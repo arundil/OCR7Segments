@@ -1,8 +1,16 @@
 package com.app.gokitchen;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.gesture.Gesture;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.Prediction;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,139 +25,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-public class GestureActivity extends Activity implements  OnGestureListener,OnDoubleTapListener {
-
+public class GestureActivity extends Activity implements OnGesturePerformedListener{
+	
+	GestureLibrary mLibrary;
+	
 	private static final String DEBUG_TAG = "GoKitchen::GestureActivity";
-	private GestureDetectorCompat mDetector;
-	DrawingView dv ;
+	
+	//DrawingView dv ;
 	private Paint mPaint; 
 	//private RectF mCurrentViewport = new RectF(AXIS_X_MIN, AXIS_Y_MIN, AXIS_X_MAX, AXIS_Y_MAX);
-
-
+    private GestureDetectorCompat mDetector;
+    
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_gesture);
-        dv = new DrawingView(this);
-        setContentView(dv);
-        mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setDither(true);
-        mPaint.setColor(Color.GREEN);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(12);
-		/*mDetector = new GestureDetectorCompat(this,this);
-		mDetector.setOnDoubleTapListener(this);	*/
+		setContentView(R.layout.activity_gesture);
+       
+		mLibrary = GestureLibraries.fromRawResource(this, R.raw.gesture);
+		   if (!mLibrary.load()) {
+		     finish();
+		   }
+		 
+		   GestureOverlayView gestures = (GestureOverlayView) findViewById(R.id.gestures);
+		   gestures.addOnGesturePerformedListener((OnGesturePerformedListener) this);
 	}
 	
-	 public class DrawingView extends View {
-
-	        public int width;
-	        public  int height;
-	        private Bitmap  mBitmap;
-	        private Canvas  mCanvas;
-	        private Path    mPath;
-	        private Paint   mBitmapPaint;
-	        Context context;
-	        private Paint circlePaint;
-	        private Path circlePath;
-
-	        public DrawingView(Context c) {
-	            super(c);
-	            context=c;
-	            mPath = new Path();
-	            mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-	            circlePaint = new Paint();
-	            circlePath = new Path();
-	            circlePaint.setAntiAlias(true);
-	            circlePaint.setColor(Color.BLUE);
-	            circlePaint.setStyle(Paint.Style.STROKE);
-	            circlePaint.setStrokeJoin(Paint.Join.MITER);
-	            circlePaint.setStrokeWidth(4f);
-	        }
-
-	        @Override
-	        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-	            super.onSizeChanged(w, h, oldw, oldh);
-
-	            mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-	            mCanvas = new Canvas(mBitmap);
-	        }
-
-	        @Override
-	        protected void onDraw(Canvas canvas) {
-	            super.onDraw(canvas);
-
-	            canvas.drawBitmap( mBitmap, 0, 0, mBitmapPaint);
-	            canvas.drawPath( mPath,  mPaint);
-	            canvas.drawPath( circlePath,  circlePaint);
-	        }
-
-	        private float mX, mY;
-	        private static final float TOUCH_TOLERANCE = 4;
-
-	        private void touch_start(float x, float y) {
-	            mPath.reset();
-	            mPath.moveTo(x, y);
-	            mX = x;
-	            mY = y;
-	        }
-
-	        private void touch_move(float x, float y) {
-	            float dx = Math.abs(x - mX);
-	            float dy = Math.abs(y - mY);
-	            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-	                mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
-	                mX = x;
-	                mY = y;
-
-	                circlePath.reset();
-	                circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
-	            }
-	        }
-
-	        private void touch_up() {
-	            mPath.lineTo(mX, mY);
-	            circlePath.reset();
-	            // commit the path to our offscreen
-	            mCanvas.drawPath(mPath,  mPaint);
-	            // kill this so we don't double draw
-	            mPath.reset();
-	        }
-
-	        @Override
-	        public boolean onTouchEvent(MotionEvent event) {
-	            float x = event.getX();
-	            float y = event.getY();
-
-	            switch (event.getAction()) {
-	                case MotionEvent.ACTION_DOWN:
-	                    touch_start(x, y);
-	                    invalidate();
-	                    
-	            		try{
-	            			Intent intent = new Intent(GestureActivity.this, OCRActivity.class);
-	            			startActivity(intent);
-	            		}catch (Exception e1){}
-	                    
-	                    break;
-	                case MotionEvent.ACTION_MOVE:
-	                    touch_move(x, y);
-	                    invalidate();
-	                    break;
-	                case MotionEvent.ACTION_UP:
-	                    touch_up();
-	                    invalidate();
-	                    break;
-	            }
-	            return true;
-	        }
-	    }
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -177,68 +80,24 @@ public class GestureActivity extends Activity implements  OnGestureListener,OnDo
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        this.mDetector.onTouchEvent(event);
-        // Be sure to call the superclass implementation
-        return super.onTouchEvent(event);
-    }
-
 
 	@Override
-	public boolean onSingleTapConfirmed(MotionEvent e) {
-        Log.d(DEBUG_TAG, "onSingleTapConfirmed: " + e.toString());
-		return true;
+	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+		
+		ArrayList<Prediction> predictions = mLibrary.recognize(gesture);
+		if (predictions.size() > 0 && predictions.get(0).score > 1.0) {
+			String result = predictions.get(0).name;
+
+			if ("ocr".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Opening the document", Toast.LENGTH_LONG).show();
+			} else if ("on".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "ON", Toast.LENGTH_LONG).show();
+			} else if("off".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "OFF", Toast.LENGTH_LONG).show();
+			
+			}
+			
+		}
 	}
 
-	@Override
-	public boolean onDoubleTap(MotionEvent e) {
-		Log.d(DEBUG_TAG, "onDoubleTap: " + e.toString());
-		return true;
-	}
-
-	@Override
-	public boolean onDoubleTapEvent(MotionEvent e) {
-		Log.d(DEBUG_TAG, "onDoubleTapEvent: " + e.toString());
-		return false;
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		Log.d(DEBUG_TAG,"onDown: " + e.toString());
-		try{
-			Intent intent = new Intent(GestureActivity.this, OCRActivity.class);
-			startActivity(intent);
-		}catch (Exception e1){}
-		return true;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		Log.d(DEBUG_TAG, "onShowPress: " + e.toString());		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		Log.d(DEBUG_TAG, "onSingleTapUp: " + e.toString());
-		return true;
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		Log.d(DEBUG_TAG, "onScroll: " + e1.toString()+e2.toString());
-		return true;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		Log.d(DEBUG_TAG, "onLongPress: " + e.toString());		
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " + e1.toString()+e2.toString());
-        return true;
-	}
 }
