@@ -89,13 +89,20 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			String result = predictions.get(0).name;
 
 			if ("ocr".equalsIgnoreCase(result)) {
-				Toast.makeText(this, "Opening the document", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "OCR Mode", Toast.LENGTH_LONG).show();
+				Intent ocrActivity = new Intent(GestureActivity.this, OCRActivity.class);
+				startActivity(ocrActivity);
+				
 			} else if ("on".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "ON", Toast.LENGTH_LONG).show();
 			} else if("off".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "OFF", Toast.LENGTH_LONG).show();
-			
+			} else if ("subir temperatura".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Subir Temperatura", Toast.LENGTH_LONG).show();
+			} else if ("bajar temperatura".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Bajar Temperatura",Toast.LENGTH_SHORT).show();
 			}
+			
 			
 		}
 	}
