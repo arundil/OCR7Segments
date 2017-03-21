@@ -13,4 +13,9 @@
     <string name="textButtonOCR">Read out hob displays value</string>
     <string name="ocr">OCR</string>
     <string name="title_activity_gesture">Place your gesture here</string>
+    <string name="offbutton">OFF	</string>
+    <string name="onbutton">ON</string>
+    <string name="lowerPower">Lower Power</string>
+    <string name="risePower">Rise Power</string>
+    <string name="bluetooth">Hob Handling</string>
 </resources>

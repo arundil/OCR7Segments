@@ -10,7 +10,7 @@
 
     
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewOCR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -25,5 +25,60 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="27dp"
         android:text="@string/textButtonOCR" />
+
+    <Button
+        android:id="@+id/buttonOFF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/buttonON"
+        android:layout_alignBottom="@+id/buttonON"
+        android:layout_alignEnd="@+id/ActivateOCR"
+        android:layout_alignRight="@+id/ActivateOCR"
+        android:layout_toEndOf="@+id/textViewOCR"
+        android:layout_toRightOf="@+id/textViewOCR"
+        android:text="@string/offbutton" />
+
+    <TextView
+        android:id="@+id/textViewBluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ActivateOCR"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/bluetooth"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/buttonON"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ActivateOCR"
+        android:layout_alignStart="@+id/ActivateOCR"
+        android:layout_below="@+id/textViewBluetooth"
+        android:layout_marginTop="38dp"
+        android:layout_toLeftOf="@+id/textViewOCR"
+        android:layout_toStartOf="@+id/textViewOCR"
+        android:text="@string/onbutton" />
+
+    <Button
+        android:id="@+id/buttonUPPOWER"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/buttonON"
+        android:layout_alignLeft="@+id/buttonON"
+        android:layout_below="@+id/buttonON"
+        android:layout_marginTop="47dp"
+        android:layout_toLeftOf="@+id/textViewOCR"
+        android:layout_toStartOf="@+id/textViewOCR"
+        android:text="@string/risePower" />
+
+    <Button
+        android:id="@+id/buttonDOWNPOWER"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/buttonUPPOWER"
+        android:layout_alignEnd="@+id/buttonOFF"
+        android:layout_alignRight="@+id/buttonOFF"
+        android:text="@string/lowerPower" />
 
 </RelativeLayout>

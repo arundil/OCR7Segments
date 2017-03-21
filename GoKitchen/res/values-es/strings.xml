@@ -10,4 +10,9 @@
     <string name="action_settings">Propiedades</string>
     <string name="action_buttons">Modo Con Botones</string>
     <string name="title_activity_gesture">Dibuje un trazo con el dedo...</string>
+    <string name="offbutton">Apagar Vitrocerámica</string>
+    <string name="onbutton">Encender Vitrocerámica</string>
+    <string name="lowerPower">Bajar Potencia</string>
+    <string name="risePower">Aumentar Potencia</string>
+    <string name="bluetooth">Manejo de la Vitrocerámica</string>
 </resources>
