@@ -1,10 +1,16 @@
 package com.app.gokitchen;
 
+import java.util.Set;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,9 +55,9 @@ public class MainActivity extends Activity {
 			    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 			}
 			
-			/*Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 			// If there are paired devices
-			if (pairedDevices.size() > 0) {
+			/*if (pairedDevices.size() > 0) {
 			    // Loop through paired devices
 			    for (BluetoothDevice device : pairedDevices) {
 			        // Add the name and address to an array adapter to show in a ListView
