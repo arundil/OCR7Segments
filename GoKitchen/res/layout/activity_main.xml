@@ -2,83 +2,158 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.app.gokitchen.MainActivity" >
 
-    
-    <TextView
-        android:id="@+id/textViewOCR"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/ocr"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
-    <Button
-        android:id="@+id/ActivateOCR"
+    <!-- Header aligned to top -->
+
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="27dp"
-        android:text="@string/textButtonOCR" />
+        android:background="#FC9"
+        android:gravity="center" >
 
-    <Button
-        android:id="@+id/buttonOFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/buttonON"
-        android:layout_alignBottom="@+id/buttonON"
-        android:layout_alignEnd="@+id/ActivateOCR"
-        android:layout_alignRight="@+id/ActivateOCR"
-        android:layout_toEndOf="@+id/textViewOCR"
-        android:layout_toRightOf="@+id/textViewOCR"
-        android:text="@string/offbutton" />
+        <ImageView
+            android:contentDescription="@string/app_name"
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/electrichob" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textViewBluetooth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ActivateOCR"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:text="@string/bluetooth"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <!-- Footer aligned to bottom -->
 
-    <Button
-        android:id="@+id/buttonON"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ActivateOCR"
-        android:layout_alignStart="@+id/ActivateOCR"
-        android:layout_below="@+id/textViewBluetooth"
-        android:layout_marginTop="38dp"
-        android:layout_toLeftOf="@+id/textViewOCR"
-        android:layout_toStartOf="@+id/textViewOCR"
-        android:text="@string/onbutton" />
+        android:layout_alignParentBottom="true"
+        android:background="#BCDF46"
+        android:gravity="center" >
 
-    <Button
-        android:id="@+id/buttonUPPOWER"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/buttonON"
-        android:layout_alignLeft="@+id/buttonON"
-        android:layout_below="@+id/buttonON"
-        android:layout_marginTop="47dp"
-        android:layout_toLeftOf="@+id/textViewOCR"
-        android:layout_toStartOf="@+id/textViewOCR"
-        android:text="@string/risePower" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:text="@string/copyrigth"
+            android:textColor="#000"
+            android:textSize="12sp" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/buttonDOWNPOWER"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/buttonUPPOWER"
-        android:layout_alignEnd="@+id/buttonOFF"
-        android:layout_alignRight="@+id/buttonOFF"
-        android:text="@string/lowerPower" />
+    <!-- Content below header and above footer -->
+
+    <RelativeLayout
+        android:id="@+id/content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:gravity="top"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <TextView
+            android:id="@+id/textViewOCR"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="7dp"
+            android:text="@string/ocr"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/ActivateOCR"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewOCR"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="@string/textButtonOCR" />
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/ActivateOCR"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:id="@+id/textViewBluetooth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="7dp"
+            android:text="@string/bluetooth"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/switchBT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textViewBluetooth"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="7dp"
+            android:text="@string/switch_bluetooth" />
+
+        <Switch
+            android:id="@+id/OnOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/switchBT"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="7dp"
+            android:text="@string/switch_on_off" />
+
+        <Button
+            android:id="@+id/buttonDOWNPOWER"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/lineBotton"
+            android:layout_alignStart="@+id/lineBotton"
+            android:layout_alignTop="@+id/buttonUPPOWER"
+            android:text="@string/lowerPower" />
+
+        <Button
+            android:id="@+id/buttonUPPOWER"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/lineBotton"
+            android:layout_alignRight="@+id/lineBotton"
+            android:layout_below="@+id/OnOff"
+            android:text="@string/risePower" />
+
+        <View
+            android:id="@+id/lineBotton"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/buttonUPPOWER"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:id="@+id/LOG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/initital_log"
+            android:textColor="#8B0000"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="15sp"
+            android:textStyle="italic" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
