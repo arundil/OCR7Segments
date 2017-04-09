@@ -10,9 +10,25 @@
     <string name="action_settings">Propiedades</string>
     <string name="action_buttons">Modo Con Botones</string>
     <string name="title_activity_gesture">Dibuje un trazo con el dedo...</string>
-    <string name="offbutton">Apagar Vitrocerámica</string>
-    <string name="onbutton">Encender Vitrocerámica</string>
     <string name="lowerPower">Bajar Potencia</string>
     <string name="risePower">Aumentar Potencia</string>
     <string name="bluetooth">Manejo de la Vitrocerámica</string>
+    <string name="switch_on_off">Encender Vitro</string>
+    <string name="switch_bluetooth">Conectarse a la Vitro</string>
+    <string-array name="textStatus">
+        <item>Desconectado</item>
+        <item>Conectando...</item>
+        <item>Conectado con éxito!</item>
+        <item>Error, por favor intente de nuevo</item>
+        <item>Enviando commando ON...</item>
+        <item>Vitrocerámica encendida!</item>
+        <item>Enviando commando OFF...</item>
+        <item>Vitrocerámica apagada!</item>
+        <item>Subiendo potencia...</item>
+        <item>Potencia subida!</item>
+        <item>Bajando potencia...</item>
+        <item>Potencia bajada!</item>
+    </string-array>
+    <string name="initital_log">Bluetooth Desconectado</string>
+    <string name="copyrigth">(CC) Marc Bayón [Universidad Autónoma de Madrid]</string>
 </resources>
