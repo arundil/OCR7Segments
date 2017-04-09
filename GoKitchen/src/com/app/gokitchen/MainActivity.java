@@ -179,12 +179,12 @@ public class MainActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
 					if(isChecked){
-						sendData("LED");
+						sendData("ON");
 						Toast.makeText(getBaseContext(),"ON", Toast.LENGTH_SHORT).show();
 					}
 					else {
 						sendData("OFF");
-						Toast.makeText(getBaseContext(),"ON", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
 					}					
 				}
 				else {
@@ -200,6 +200,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+					sendData("PWUP");
 					Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
 				}
 				else {
@@ -214,6 +215,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+					sendData("PWDOWN");
 					Toast.makeText(getBaseContext(),R.string.lowerPower, Toast.LENGTH_SHORT).show();
 				}
 				else {
