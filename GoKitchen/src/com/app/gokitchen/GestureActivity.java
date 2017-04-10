@@ -93,6 +93,8 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				Intent ocrActivity = new Intent(GestureActivity.this, OCRActivity.class);
 				startActivity(ocrActivity);
 				
+			}else if ("connect".equalsIgnoreCase(result)) {
+				Toast.makeText(this, "Conectado",Toast.LENGTH_SHORT).show();
 			} else if ("on".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "ON", Toast.LENGTH_LONG).show();
 			} else if("off".equalsIgnoreCase(result)) {

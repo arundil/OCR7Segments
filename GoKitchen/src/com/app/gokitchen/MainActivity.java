@@ -5,8 +5,6 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-import com.app.gokitchen.R.array;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -15,7 +13,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -68,7 +65,7 @@ public class MainActivity extends Activity {
 			alertDialog.show();
 		}
 		else {
-			checkBTState();
+			//checkBTState();
 		}
 
 		loginfo = (TextView)findViewById(R.id.LOG);
@@ -103,15 +100,15 @@ public class MainActivity extends Activity {
 			}
 		});*/
 
-		Switch ConnectBT = (Switch) findViewById(R.id.switchBT);
-		connectBT();
+		final Switch ConnectBT = (Switch) findViewById(R.id.switchBT);
+		/*connectBT();
 		if (checkBTState())
 			if (sendData("STATUS")){
 				ConnectBT.setChecked(true);				
 			}
 			else {
 				ConnectBT.setChecked(false);
-			}
+			}*/
 
 		ConnectBT.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -170,7 +167,7 @@ public class MainActivity extends Activity {
 		});
 
 
-		Switch OnOff = (Switch) findViewById(R.id.OnOff);
+		final Switch OnOff = (Switch) findViewById(R.id.OnOff);
 		OnOff.setChecked(false);
 
 		OnOff.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -178,14 +175,21 @@ public class MainActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-					if(isChecked){
-						sendData("ON");
-						Toast.makeText(getBaseContext(),"ON", Toast.LENGTH_SHORT).show();
+
+					if(ConnectBT.isChecked()) {
+
+						if(isChecked){
+							sendData("ON");
+							Toast.makeText(getBaseContext(),"ON", Toast.LENGTH_SHORT).show();
+						}
+						else {
+							sendData("OFF");
+							Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
+						}
 					}
 					else {
-						sendData("OFF");
-						Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
-					}					
+						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB", Toast.LENGTH_SHORT).show();
+					}
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
@@ -200,12 +204,18 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-					sendData("PWUP");
-					Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
+					if(ConnectBT.isChecked() && OnOff.isChecked()) {
+						sendData("PWUP");
+						Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
+					}
+					else {
+						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
+					}
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
 				}
+
 
 			}
 		});
@@ -215,8 +225,13 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-					sendData("PWDOWN");
-					Toast.makeText(getBaseContext(),R.string.lowerPower, Toast.LENGTH_SHORT).show();
+					if(ConnectBT.isChecked() && OnOff.isChecked()) {
+						sendData("PWDOWN");
+						Toast.makeText(getBaseContext(),R.string.lowerPower, Toast.LENGTH_SHORT).show();
+					}
+					else {
+						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
+					}
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
@@ -261,7 +276,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		connectBT();
+		//connectBT();
 	}
 
 	@Override
