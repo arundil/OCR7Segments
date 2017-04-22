@@ -66,13 +66,13 @@ def main():
                 if len(data) == 0: break
                 print("received [%s]" % data)
                 if data == "STATUS":
-                    print "Connected"
+                    print ("Connected")
                     GPIO.output(GPIO_BT_CONNECTED,GPIO.HIGH)
                     #server_sock.send("OK")
                     print("Send [OK]")
                     
                 if data == "ON":
-                    print "Vitro on"
+                    print ("Vitro on")
                     GPIO.output(GPIO_ON_OFF,GPIO.HIGH)
                     POWER_ON = True
                     #server_sock.send("ON_OK")
@@ -80,7 +80,7 @@ def main():
                     buzzer(1)
                     
                 if data == "OFF":
-                    print "Vitro OFF"
+                    print ("Vitro OFF")
                     clearGPIO(False)
                     HOB_POWER = 0
                     POWER_ON = False
@@ -89,7 +89,7 @@ def main():
                     buzzer(2)
                     
                 if data == "PWUP":
-                    print "Power UP"
+                    print ("Power UP")
                     if POWER_ON:
                         HOB_POWER = HOB_POWER+1
                         if DisplayPower(HOB_POWER):
@@ -107,7 +107,7 @@ def main():
                             
                 if data == "PWDOWN":
                     if POWER_ON:
-                        print "Power DOWN"
+                        print ("Power DOWN")
                         HOB_POWER = HOB_POWER-1
                         if DisplayPower(HOB_POWER):
                             #server_sock.send("PWDOWN_OK")
