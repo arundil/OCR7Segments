@@ -1,0 +1,19 @@
+1) Instalar los paquetes necesarios.
+
+sudo apt-get install pi-bluetooth
+
+sudo apt-get install bluetooth bluez
+sudo apt-get install bluez python-bluez
+sudo hciconfig hci0 piscan
+
+
+
+2) Edit "/lib/systemd/system/bluetooth.service"
+
+and change the line :
+
+ExecStart=/usr/lib/bluetooth/bluetoothd
+
+To :
+
+ExecStart=/usr/lib/bluetooth/bluetoothd --compa1
