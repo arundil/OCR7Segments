@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
 		OnOff.setChecked(false);
 		
 		arrayLog = getResources().getStringArray(R.array.textStatus);
-
 		if (mBluetoothAdapter == null) {
 			// Device does not support Bluetooth
 			AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -111,6 +110,7 @@ public class MainActivity extends Activity {
 						Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 						startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 						loginfo.setText(arrayLog[3]);
+						buttonView.setChecked(false);
 					}
 
 				}
@@ -276,6 +276,8 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		Log.d(TAG, "...In OnResume()...");
+
 	}
 
 	@Override
@@ -283,9 +285,11 @@ public class MainActivity extends Activity {
 		super.onPause();
 		
 		Log.d(TAG, "...In onPause()...");
-		BluetoothHandler.freeConnection();
-		OnOff.setChecked(false);
-		ConnectBT.setChecked(false);
+		if ((mBluetoothAdapter != null) && (mBluetoothAdapter.isEnabled()) && (BluetoothHandler != null)) {
+			BluetoothHandler.freeConnection();
+			OnOff.setChecked(false);
+			ConnectBT.setChecked(false);
+		}
 	}
 
 }

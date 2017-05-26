@@ -8,7 +8,6 @@ import java.util.UUID;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.util.Log;
 
 public class GoKitchenBluetoothHandlerImpl implements GoKitchenBluetoothHandler {
@@ -18,12 +17,11 @@ public class GoKitchenBluetoothHandlerImpl implements GoKitchenBluetoothHandler 
 	private BluetoothSocket mBluetoothSocket = null;
 	private static String address = "B8:27:EB:B8:88:BD";
 	private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-	private static final int REQUEST_ENABLE_BT = 1;
 	OutputStream outStream;
 
 	
 	public GoKitchenBluetoothHandlerImpl() {
-		mBluetoothAdapter = getBluetoothAdapter();
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		
 	}
 	
@@ -118,58 +116,48 @@ public class GoKitchenBluetoothHandlerImpl implements GoKitchenBluetoothHandler 
 		}
 	}
 
-	@Override
-	public Boolean closeSocket() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BluetoothAdapter getBluetoothAdapter() {
-		return BluetoothAdapter.getDefaultAdapter();
-	}
 
 	@Override
 	public Boolean sendData(String message) {
-		
+
 		byte[] msgBuffer = message.getBytes();
 
 		Log.d(TAG, "...Sending data: " + message + "...");
+		if (outStream != null){
+			try {
+				outStream.write(msgBuffer);
+				return true;
+			} catch (IOException e) {
+				String msg = "An exception occurred during write: " + e.getMessage();
+				if (address.equals("00:00:00:00:00:00")) 
+					msg = msg + ".\n\nUpdate your server address";
+				msg = msg +  ".\n\nCheck that the SPP UUID: " + MY_UUID.toString() + " exists on Bluetooth server.\n\n";
 
-		try {
-			outStream.write(msgBuffer);
-			return true;
-		} catch (IOException e) {
-			String msg = "An exception occurred during write: " + e.getMessage();
-			if (address.equals("00:00:00:00:00:00")) 
-				msg = msg + ".\n\nUpdate your server address";
-			msg = msg +  ".\n\nCheck that the SPP UUID: " + MY_UUID.toString() + " exists on Bluetooth server.\n\n";
-
-//			errorExit("Fatal Error", msg); 
-			freeConnection();
-			return false;
+				//			errorExit("Fatal Error", msg); 
+				freeConnection();
+				return false;
+			}
 		}
-		
-		
+		return false;
+
+
 	}
 	
 	public void freeConnection ()
 	{
-		
+
 		if (outStream != null) {
 			try {
 				outStream.flush();
 			} catch (IOException e) {
-				//errorExit("Fatal Error", "In onCheckedChanged() and failed to flush output stream: " + e.getMessage() + ".");
 			}
 		}
 
-		try  {
-			mBluetoothSocket.close();
-		} catch (IOException e2) {
-//			errorExit("Fatal Error", "In onCheckedChanged() and failed to close socket." + e2.getMessage() + ".");
+		if (mBluetoothSocket != null) {
+			try  {
+				mBluetoothSocket.close();
+			} catch (IOException e2) {
+			}
 		}
 	}
-	
-
 }

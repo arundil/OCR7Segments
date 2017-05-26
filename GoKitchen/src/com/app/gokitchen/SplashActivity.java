@@ -1,6 +1,5 @@
 package com.app.gokitchen;
 
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -8,17 +7,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.Window;
 import android.widget.Toast;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
 
 
 public class SplashActivity extends Activity implements TextToSpeech.OnInitListener {
 	
 	// Set the duration of the splash screen
     private static final long SPLASH_SCREEN_DELAY = 1000;
-	private TextToSpeech textToSpeech;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +27,7 @@ public class SplashActivity extends Activity implements TextToSpeech.OnInitListe
         requestWindowFeature(Window.FEATURE_NO_TITLE);
  
         setContentView(R.layout.activity_splash);
-        
-		textToSpeech = new TextToSpeech( this, (OnInitListener) this );
-		textToSpeech.setLanguage( new Locale( "spa", "ESP" ) );
-        
- 
+         
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
@@ -55,15 +48,8 @@ public class SplashActivity extends Activity implements TextToSpeech.OnInitListe
         Timer timer = new Timer();
         timer.schedule(task, SPLASH_SCREEN_DELAY);
  
-        speak("Hola, Iniciando la aplicación. Espere por favor");
     }
     
-    private void speak( String str )
-	{
-		textToSpeech.speak( str, TextToSpeech.QUEUE_FLUSH, null );
-		textToSpeech.setSpeechRate( 0.0f );
-		textToSpeech.setPitch( 0.0f );
-	}
 
 	@Override
 	public void onInit(int status) {
@@ -77,12 +63,6 @@ public class SplashActivity extends Activity implements TextToSpeech.OnInitListe
 	
 	@Override
 	public void onDestroy() {
-
-		if ( textToSpeech != null )
-		{
-			textToSpeech.stop();
-			textToSpeech.shutdown();
-		}
 		super.onDestroy();
 	}
 
