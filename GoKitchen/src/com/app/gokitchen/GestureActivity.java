@@ -19,7 +19,6 @@ import android.gesture.GestureOverlayView.OnGesturePerformedListener;
 import android.gesture.Prediction;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -28,7 +27,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 
 	GestureLibrary mLibrary;
 
-	private static final String TAG = "GoKitchen::GestureActivity";
+	//private static final String TAG = "GoKitchen::GestureActivity";
 	private static final int REQUEST_ENABLE_BT = 1;
 	private GoKitchenBluetoothHandler BluetoothHandler = null;
 	private BluetoothAdapter mBluetoothAdapter = null;
@@ -119,7 +118,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			if ("ocr".equalsIgnoreCase(result)) {
 				Toast.makeText(this, "OCR Mode", Toast.LENGTH_LONG).show();
 				textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-				speak("Iniciando Modo OCR");
+				speak(getResources().getString(R.string.audio_ORCMode));
 				Intent ocrActivity = new Intent(GestureActivity.this, OCRActivity.class);
 				startActivity(ocrActivity);
 
@@ -279,6 +278,11 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				}
 
 			}
+			else {
+				Toast.makeText(getBaseContext(),"No se ha reconocido el trazo", Toast.LENGTH_SHORT).show();
+				textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+				speak("Comando gesture no reconocido. Dibújelo de nuevo");
+			}
 
 		}
 	}
@@ -296,7 +300,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d(TAG, "...In OnResume()...");
+		//Log.d(TAG, "...In OnResume()...");
 
 	}
 
@@ -304,7 +308,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 	public void onPause() {
 		super.onPause();
 
-		Log.d(TAG, "...In onPause()...");
+		//Log.d(TAG, "...In onPause()...");
 		if ((mBluetoothAdapter != null) && (mBluetoothAdapter.isEnabled()) && (BluetoothHandler != null)) {
 			BluetoothHandler.freeConnection();
 			on_off = false;

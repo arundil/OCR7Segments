@@ -24,7 +24,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	private static final String TAG = "goKitchen";
+	//private static final String TAG = "goKitchen";
 	private static final int REQUEST_ENABLE_BT = 1;
 	private BluetoothAdapter mBluetoothAdapter = null;
 	private TextView loginfo;
@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Log.d(TAG, "...In OnResume()...");
+		//Log.d(TAG, "...In OnResume()...");
 
 	}
 
@@ -284,7 +284,7 @@ public class MainActivity extends Activity {
 	public void onPause() {
 		super.onPause();
 		
-		Log.d(TAG, "...In onPause()...");
+		//Log.d(TAG, "...In onPause()...");
 		if ((mBluetoothAdapter != null) && (mBluetoothAdapter.isEnabled()) && (BluetoothHandler != null)) {
 			BluetoothHandler.freeConnection();
 			OnOff.setChecked(false);

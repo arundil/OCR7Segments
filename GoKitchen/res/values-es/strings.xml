@@ -31,4 +31,5 @@
     </string-array>
     <string name="initital_log">Bluetooth Desconectado</string>
     <string name="copyrigth">(CC) Marc Bayón [Universidad Autónoma de Madrid]</string>
+    <string name="audio_ORCMode">Iniciando Modo OCR</string>
 </resources>

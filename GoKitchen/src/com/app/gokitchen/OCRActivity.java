@@ -10,19 +10,17 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import com.app.gokitchen.util.*;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -31,6 +29,10 @@ import org.opencv.imgproc.Imgproc;
 
 import com.app.gokitchen.util.OCR7SegmentDictionary;
 import com.app.gokitchen.util.OCR7SegmentDictionaryImpl;
+import com.app.gokitchen.util.OCR7SegmentImageEnhacement;
+import com.app.gokitchen.util.OCR7SegmentImageEnhacementImpl;
+import com.app.gokitchen.util.OCR7SegmentRoiDetection;
+import com.app.gokitchen.util.OCR7SegmentRoiDetectionImpl;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import android.Manifest;
@@ -40,13 +42,11 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -54,7 +54,7 @@ import android.widget.Toast;
 
 public class OCRActivity extends Activity implements CvCameraViewListener2,TextToSpeech.OnInitListener{
 
-	private static final String TAG = "OCVSample::Activity";
+	//private static final String TAG = "OCVSample::Activity";
 	private static final Scalar FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
 	private static final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/GoKitchen/";
 	private static final String lang = "7seg";
@@ -71,7 +71,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 			switch (status) {
 			case LoaderCallbackInterface.SUCCESS:
 			{
-				Log.i(TAG, "OpenCV loaded successfully");
+//				Log.i(TAG, "OpenCV loaded successfully");
 				mOpenCvCameraView.enableView();
 			} break;
 			default:
@@ -83,13 +83,13 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	};
 	
 	public OCRActivity() {
-		Log.i(TAG, "Instantiated new " + this.getClass());
+//		Log.i(TAG, "Instantiated new " + this.getClass());
 	}
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(TAG, "called onCreate");
+//		Log.i(TAG, "called onCreate");
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
@@ -139,10 +139,10 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 			File dir = new File(path);
 			if (!dir.exists()) {
 				if (!dir.mkdirs()) {
-					Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
+//					Log.v(TAG, "ERROR: Creation of directory " + path + " on sdcard failed");
 					return;
 				} else {
-					Log.v(TAG, "Created directory " + path + " on sdcard");
+//					Log.v(TAG, "Created directory " + path + " on sdcard");
 				}
 			}
 
@@ -168,9 +168,9 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 				//gin.close();
 				out.close();
 
-				Log.v(TAG, "Copied " + lang + " traineddata");
+//				Log.v(TAG, "Copied " + lang + " traineddata");
 			} catch (IOException e) {
-				Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
+//				Log.e(TAG, "Was unable to copy " + lang + " traineddata " + e.toString());
 			}
 		}
 
@@ -206,10 +206,10 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	{
 		super.onResume();
 		if (!OpenCVLoader.initDebug()) {
-			Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+//			Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
 			OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
 		} else {
-			Log.d(TAG, "OpenCV library found inside package. Using it!");
+//			Log.d(TAG, "OpenCV library found inside package. Using it!");
 			mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
 		}
 	}
@@ -276,10 +276,10 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 
 				Mat imageROI = image.submat(Imgproc.boundingRect(p));
 				//Calculate the resolution of every photogram
-				int resolution  = image.width()/image.height();
+//				int resolution  = image.width()/image.height();
 				
-				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
-				Log.i(TAG, "RESOLUTION: "+resolution);
+//				Log.i(TAG, "W: "+image.size().width+" H: "+image.size().height);
+//				Log.i(TAG, "RESOLUTION: "+resolution);
 				double reductionFactorW = 1;
 				double reductionFactorH = 1; 
 				
@@ -295,7 +295,7 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 				if (((imageROI.height()<=(172/reductionFactorH) && (imageROI.height()>=(44/reductionFactorH))))
 						&& (((imageROI.width()<=(380/reductionFactorW)) && (imageROI.width()>=(95/reductionFactorW))))) {
 					
-					Log.i(TAG, "WROI: "+imageROI.size().width+" HROI: "+imageROI.size().height);
+//					Log.i(TAG, "WROI: "+imageROI.size().width+" HROI: "+imageROI.size().height);
 					
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
 					listaux.add(p);
@@ -329,8 +329,8 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 					double avarageOfWhitePixels = (WhitePixels/numOfPixels)*100;
 					
 					
-					Log.d(TAG, "WhitePixels: " + WhitePixels);
-					Log.d(TAG, "Average: " + avarageOfWhitePixels);
+//					Log.d(TAG, "WhitePixels: " + WhitePixels);
+//					Log.d(TAG, "Average: " + avarageOfWhitePixels);
 
 					
 					// Tesseract Part
@@ -384,8 +384,8 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		Mat kernel = Mat.ones(new Size(2,2),CvType.CV_8U);
 		Imgproc.medianBlur(ret, ret, 5); //Smoooth filter 
 		ret= OCRImage.deskew(ret);
-		Log.v(TAG, "rows " + ret.rows());
-		Log.v(TAG, "cols " + ret.cols());
+//		Log.v(TAG, "rows " + ret.rows());
+//		Log.v(TAG, "cols " + ret.cols());
 		int cols_to_remove = (int) (ret.cols()*0.05);
 		int rows_to_remove = (int) (ret.rows()*0.05);
 		Mat retfinal= ret.submat(rows_to_remove, ret.rows()-rows_to_remove, cols_to_remove, ret.cols()-cols_to_remove);
