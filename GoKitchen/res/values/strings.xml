@@ -44,4 +44,10 @@
     <string name="audio_unknowGesture">hmmmm! Unknow Gesture Command. I can not guess it. Please, draw it again.</string>
     <string name="audio_unknowError">Oh! Oh! There was an unknow error. Please connect it again and try it one more time.</string>
     <string name="audio_HobPWDOWN">Reducing the Power</string>
+    <string name="gesture_noBluetooth">Your device does not support bluetooth</string>
+    <string name="gesture_OCRMode">OCR Mode</string>
+    <string name="gesture_connected">Connected</string>
+    <string name="gesture_ProtocolError">Protocol Error.</string>
+    <string name="gesture_disconnect">Disconnected.</string>
+    <string name="gesture_NotConnected">Please connect first with the Electronic HOB</string>
 </resources>

@@ -33,7 +33,7 @@
     <string name="copyrigth">(CC) Marc Bayón [Universidad Autónoma de Madrid]</string>
     <string name="audio_ORCMode">Iniciando Modo OCR</string>
     <string name="audio_connected">Te has conectado a la vitrocerámica de forma correcta</string>
-    <string name="audio_errorProtocol">¡Oh vaya! Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.</string>
+    <string name="audio_errorProtocol">Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.</string>
     <string name="audio_errorBluetoth">Su bluetooth está desconectado o su dispositivo no está emparejado. Por favor configúrelo y vuelva a intentarlo</string>
     <string name="audio_disconnected">Ok! Todo desconectado y apagado.</string>
     <string name="audio_HobOff">Vitrocerámica encendida</string>
@@ -44,4 +44,10 @@
     <string name="audio_unknowGesture">¡Oh Vaya! No he entendido lo que has dibujado. Por favor, Dibújelo de nuevo</string>
     <string name="audio_unknowError">Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.</string>
     <string name="audio_HobPWDOWN">Bajando la potencia</string>
+    <string name="gesture_noBluetooth">Tu dispositivo no tiene bluetooth.</string>
+    <string name="gesture_OCRMode">Modo OCR</string>
+    <string name="gesture_connected">Conectado</string>
+    <string name="gesture_ProtocolError">Error de protocolo.</string>
+    <string name="gesture_disconnect">Desconectado.</string>
+    <string name="gesture_NotConnected">Por favor, conéctese primero con la vitrocerámica.</string>
 </resources>

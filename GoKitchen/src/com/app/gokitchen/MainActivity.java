@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,7 +55,7 @@ public class MainActivity extends Activity {
 			// Device does not support Bluetooth
 			AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
 			alertDialog.setTitle("Oh Oh!");
-			alertDialog.setMessage("Your device does not support bluetooth");
+			alertDialog.setMessage(getResources().getString(R.string.gesture_noBluetooth));
 			alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
@@ -145,7 +144,7 @@ public class MainActivity extends Activity {
 							else {
 								loginfo.setText(arrayLog[3]);
 								OnOff.setChecked(!OnOff.isChecked());
-								Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
 							}
 						}
 						else {
@@ -159,19 +158,19 @@ public class MainActivity extends Activity {
 								OnOff.setChecked(false);
 								ConnectBT.setChecked(false);
 								
-								Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
+								Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
 							}
 						}
 					}
 					else {
 						loginfo.setText(arrayLog[0]);
-						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_NotConnected), Toast.LENGTH_SHORT).show();
 						OnOff.setChecked(false);
 					}
 				}
 				else {
 					loginfo.setText(arrayLog[0]);
-					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getBaseContext(),"Error Bluetooth", Toast.LENGTH_SHORT).show();
 					OnOff.setChecked(false);
 					ConnectBT.setChecked(false);
 				}
@@ -193,17 +192,17 @@ public class MainActivity extends Activity {
 						}
 						else {
 							loginfo.setText(arrayLog[4]);
-							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
 						}
 					}
 					else {
 						loginfo.setText(arrayLog[0]);
-						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_NotConnected), Toast.LENGTH_SHORT).show();
 					}
 				}
 				else {
 					loginfo.setText(arrayLog[0]);
-					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getBaseContext(),"Error Bluetooth", Toast.LENGTH_SHORT).show();
 				}
 
 
@@ -224,17 +223,17 @@ public class MainActivity extends Activity {
 						}
 						else {
 							loginfo.setText(arrayLog[4]);
-							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
 						}
 					}
 					else {
 						loginfo.setText(arrayLog[0]);
-						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_NotConnected), Toast.LENGTH_SHORT).show();
 					}
 				}
 				else {
 					loginfo.setText(arrayLog[0]);
-					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getBaseContext(),"Error Bluetooth", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
