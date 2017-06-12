@@ -50,4 +50,6 @@
     <string name="gesture_ProtocolError">Protocol Error.</string>
     <string name="gesture_disconnect">Disconnected.</string>
     <string name="gesture_NotConnected">Please connect first with the Electronic HOB</string>
+    <string name="audio_already_connected">You are already connected to the Hob. </string>
+    <string name="audio_HobAlreadyOff">The hob was already off.</string>
 </resources>

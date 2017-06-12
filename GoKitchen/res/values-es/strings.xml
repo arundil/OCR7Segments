@@ -36,7 +36,7 @@
     <string name="audio_errorProtocol">Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.</string>
     <string name="audio_errorBluetoth">Su bluetooth está desconectado o su dispositivo no está emparejado. Por favor configúrelo y vuelva a intentarlo</string>
     <string name="audio_disconnected">Ok! Todo desconectado y apagado.</string>
-    <string name="audio_HobOff">Vitrocerámica encendida</string>
+    <string name="audio_HobOff">Vitrocerámica apagada</string>
     <string name="audio_HobPWUP">Subiendo la potencia</string>
     <string name="audio_HobON">Vitrocerámica encendida</string>
     <string name="audio_errorNotPWON">Por favor, conéctese primero con la vitrocerámica y luego enciéndala con el comando ON.</string>
@@ -50,4 +50,6 @@
     <string name="gesture_ProtocolError">Error de protocolo.</string>
     <string name="gesture_disconnect">Desconectado.</string>
     <string name="gesture_NotConnected">Por favor, conéctese primero con la vitrocerámica.</string>
+    <string name="audio_already_connected">Ya estás conectado a la vitrocerámica.</string>
+    <string name="audio_HobAlreadyOff">La vitrocerámica ya se encontraba apagada. Conéctela si quiere usarla.</string>
 </resources>

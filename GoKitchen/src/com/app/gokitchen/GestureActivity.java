@@ -45,7 +45,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 		if (!mLibrary.load()) {
 			finish();
 		}
-		
+
 		textToSpeech = new TextToSpeech( this, this );
 		textToSpeech.setLanguage( new Locale( "spa", "ESP" ) );
 
@@ -79,7 +79,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			Toast.makeText( this, "ERROR LANG_MISSING_DATA | LANG_NOT_SUPPORTED", Toast.LENGTH_SHORT ).show();
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -124,28 +124,36 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 
 			}else if ("connect".equalsIgnoreCase(result)) {
 
-				BluetoothHandler.connectBT();
+				if (!connected) {
 
-				if (BluetoothHandler.checkBTState()) {
-					if (BluetoothHandler.sendData("STATUS")) {
-						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak(getResources().getString(R.string.audio_connected));
-						Toast.makeText(this, getResources().getString(R.string.gesture_connected),Toast.LENGTH_SHORT).show();
-						connected = true;
+					BluetoothHandler.connectBT();
+
+					if (BluetoothHandler.checkBTState()) {
+						if (BluetoothHandler.sendData("STATUS")) {
+							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+							speak(getResources().getString(R.string.audio_connected));
+							Toast.makeText(this, getResources().getString(R.string.gesture_connected),Toast.LENGTH_SHORT).show();
+							connected = true;
+						}
+						else {
+							Toast.makeText(this, getResources().getString(R.string.gesture_ProtocolError),Toast.LENGTH_SHORT).show();
+							connected = false;
+							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+							speak(getResources().getString(R.string.audio_errorProtocol));
+						}
 					}
 					else {
-						Toast.makeText(this, getResources().getString(R.string.gesture_ProtocolError),Toast.LENGTH_SHORT).show();
-						connected = false;
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak(getResources().getString(R.string.audio_errorProtocol));
+						speak(getResources().getString(R.string.audio_errorBluetoth));
+						Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+						startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+						connected = false;
 					}
 				}
-				else {
+				else{
+					Toast.makeText(this, getResources().getString(R.string.audio_already_connected),Toast.LENGTH_SHORT).show();
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak(getResources().getString(R.string.audio_errorBluetoth));
-					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-					startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-					connected = false;
+					speak(getResources().getString(R.string.audio_already_connected));
 				}
 
 			}else if ("disconnect".equalsIgnoreCase(result)) {
@@ -192,18 +200,25 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			} else if("off".equalsIgnoreCase(result)) {
 				if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
 					if (connected == true) {
-						if (BluetoothHandler.sendData("OFF")) {
-							on_off=false;
-							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak(getResources().getString(R.string.audio_HobOff));
-							Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
+						if (on_off == true) {
+							if (BluetoothHandler.sendData("OFF")) {
+								on_off=false;
+								textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+								speak(getResources().getString(R.string.audio_HobOff));
+								Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
+							}
+							else {
+								Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
+								textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
+								speak(getResources().getString(R.string.audio_errorBluetoth));
+								on_off=false;
+								connected = false;
+							}
 						}
 						else {
-							Toast.makeText(getBaseContext(),getResources().getString(R.string.gesture_ProtocolError), Toast.LENGTH_SHORT).show();
+							Toast.makeText(this, getResources().getString(R.string.audio_HobAlreadyOff),Toast.LENGTH_SHORT).show();
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak(getResources().getString(R.string.audio_errorBluetoth));
-							on_off=false;
-							connected = false;
+							speak(getResources().getString(R.string.audio_HobAlreadyOff));
 						}
 
 					}
@@ -315,7 +330,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 			connected = false;
 		}
 	}
-	
+
 	private void speak( String str )
 	{
 		textToSpeech.speak( str, TextToSpeech.QUEUE_FLUSH, null );
