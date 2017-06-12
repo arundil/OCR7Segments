@@ -32,4 +32,16 @@
     <string name="initital_log">Bluetooth Disconected</string>
     <string name="copyrigth">(CC) Marc Bayón [Universidad Autónoma de Madrid]</string>
     <string name="audio_ORCMode">Starting OCR Mode</string>
+    <string name="audio_connected">Now you are connected to the Hob</string>
+    <string name="audio_errorProtocol">Oh oh! There was a failure during sending the data. Please, make sure the receptor is power on and try to connect it again.</string>
+    <string name="audio_errorBluetoth">Your Bluetooth is not switch on or the receptor is not paired. Please, configure it first and then try it again.</string>
+    <string name="audio_disconnected">All right! Everything disconnected and switch off.</string>
+    <string name="audio_HobOff">Hob Power Off</string>
+    <string name="audio_HobPWUP">Rising the Power</string>
+    <string name="audio_HobON">Hob Power on</string>
+    <string name="audio_errorNotPWON">Please, connect first with the Hob and then power it on with the ON command.</string>
+    <string name="audio_errorNotConnected">Please, connect the device first with the Hob.</string>
+    <string name="audio_unknowGesture">hmmmm! Unknow Gesture Command. I can not guess it. Please, draw it again.</string>
+    <string name="audio_unknowError">Oh! Oh! There was an unknow error. Please connect it again and try it one more time.</string>
+    <string name="audio_HobPWDOWN">Reducing the Power</string>
 </resources>

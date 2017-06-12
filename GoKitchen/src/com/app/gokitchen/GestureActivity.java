@@ -129,7 +129,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 				if (BluetoothHandler.checkBTState()) {
 					if (BluetoothHandler.sendData("STATUS")) {
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Conectado a la Vitrocerámica");
+						speak(getResources().getString(R.string.audio_connected));
 						Toast.makeText(this, "Conectado",Toast.LENGTH_SHORT).show();
 						connected = true;
 					}
@@ -137,12 +137,12 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 						Toast.makeText(this, "ERROR en Protocolo",Toast.LENGTH_SHORT).show();
 						connected = false;
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.");
+						speak(getResources().getString(R.string.audio_errorProtocol));
 					}
 				}
 				else {
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak("Su bluetooth está desconectado o su dispositivo no está emparejado. Por favor configúrelo y vuelva a intentarlo");
+					speak(getResources().getString(R.string.audio_errorBluetoth));
 					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 					connected = false;
@@ -150,7 +150,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 
 			}else if ("disconnect".equalsIgnoreCase(result)) {
 				textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-				speak("Ok, Todo desconectado y apagado.");
+				speak(getResources().getString(R.string.audio_disconnected));
 				BluetoothHandler.freeConnection();
 				connected = false;
 				Toast.makeText(this, "Desconectado", Toast.LENGTH_LONG).show();
@@ -161,14 +161,14 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 						if (BluetoothHandler.sendData("ON")) {
 							on_off=true;
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Vitrocerámica encendida");
+							speak(getResources().getString(R.string.audio_HobON));
 							Toast.makeText(getBaseContext(),"ON", Toast.LENGTH_SHORT).show();
 						}
 						else {
 							on_off=false;
 							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.");
+							speak(getResources().getString(R.string.audio_errorBluetoth));
 						}
 
 					}
@@ -176,7 +176,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB", Toast.LENGTH_SHORT).show();
 						on_off=false;
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Por favor, conéctese primero con la vitrocerámica.");
+						speak(getResources().getString(R.string.audio_errorNotConnected));
 					}
 
 				}
@@ -185,7 +185,7 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 					on_off=false;
 					connected = false;
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak("Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.");
+					speak(getResources().getString(R.string.audio_unknowError));
 				}
 
 
@@ -195,13 +195,13 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 						if (BluetoothHandler.sendData("OFF")) {
 							on_off=false;
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Vitrocerámica apagada");
+							speak(getResources().getString(R.string.audio_HobOff));
 							Toast.makeText(getBaseContext(),"OFF", Toast.LENGTH_SHORT).show();
 						}
 						else {
 							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.");
+							speak(getResources().getString(R.string.audio_errorBluetoth));
 							on_off=false;
 							connected = false;
 						}
@@ -211,14 +211,14 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB", Toast.LENGTH_SHORT).show();
 						on_off=false;
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Por favor, conéctese primero con la vitrocerámica.");
+						speak(getResources().getString(R.string.audio_errorNotConnected));
 					}
 
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak("Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.");
+					speak(getResources().getString(R.string.audio_unknowError));
 					on_off=false;
 					connected = false;
 				}
@@ -229,25 +229,25 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 					if(on_off && connected) {
 						if (BluetoothHandler.sendData("PWUP")) {
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Subiendo la potencia");
+							speak(getResources().getString(R.string.audio_HobPWUP));
 							Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
 						}
 						else {
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.");
+							speak(getResources().getString(R.string.audio_errorBluetoth));
 							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
 						}
 					}
 					else {
 						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Por favor, conéctese primero con la vitrocerámica y luego enciéndala con el comando ON.");
+						speak(getResources().getString(R.string.audio_errorNotPWON));
 					}
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak("Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.");
+					speak(getResources().getString(R.string.audio_errorBluetoth));
 				}
 
 			} else if ("bajar temperatura".equalsIgnoreCase(result)) {
@@ -256,32 +256,32 @@ public class GestureActivity extends Activity implements OnGesturePerformedListe
 					if(on_off && connected) {
 						if (BluetoothHandler.sendData("PWDOWN")) {
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Bajando la potencia");
+							speak(getResources().getString(R.string.audio_HobPWDOWN));
 							Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
 						}
 						else {
 							textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-							speak("Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.");
+							speak(getResources().getString(R.string.audio_errorBluetoth));
 							Toast.makeText(getBaseContext(),"Error on Bluetooth Protocol", Toast.LENGTH_SHORT).show();
 						}
 					}
 					else {
 						Toast.makeText(getBaseContext(),"Please connect first with the Electronic HOB and turn it ON", Toast.LENGTH_SHORT).show();
 						textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-						speak("Por favor, conéctese primero con la vitrocerámica y luego enciéndala con el comando ON.");
+						speak(getResources().getString(R.string.audio_errorNotPWON));
 					}
 				}
 				else {
 					Toast.makeText(getBaseContext(),"Error on Bluetooth", Toast.LENGTH_SHORT).show();
 					textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-					speak("Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.");
+					speak(getResources().getString(R.string.audio_errorBluetoth));
 				}
 
 			}
 			else {
 				Toast.makeText(getBaseContext(),"No se ha reconocido el trazo", Toast.LENGTH_SHORT).show();
 				textToSpeech.setLanguage( new Locale( "esp", "ESP" ) );
-				speak("Comando gesture no reconocido. Dibújelo de nuevo");
+				speak(getResources().getString(R.string.audio_unknowGesture));
 			}
 
 		}

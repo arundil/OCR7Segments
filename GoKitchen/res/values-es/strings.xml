@@ -32,4 +32,16 @@
     <string name="initital_log">Bluetooth Desconectado</string>
     <string name="copyrigth">(CC) Marc Bayón [Universidad Autónoma de Madrid]</string>
     <string name="audio_ORCMode">Iniciando Modo OCR</string>
+    <string name="audio_connected">Te has conectado a la vitrocerámica de forma correcta</string>
+    <string name="audio_errorProtocol">¡Oh vaya! Se ha producido un error al enviar del dato. Por favor, verífique el receptor y vuelva a conectarse.</string>
+    <string name="audio_errorBluetoth">Su bluetooth está desconectado o su dispositivo no está emparejado. Por favor configúrelo y vuelva a intentarlo</string>
+    <string name="audio_disconnected">Ok! Todo desconectado y apagado.</string>
+    <string name="audio_HobOff">Vitrocerámica encendida</string>
+    <string name="audio_HobPWUP">Subiendo la potencia</string>
+    <string name="audio_HobON">Vitrocerámica encendida</string>
+    <string name="audio_errorNotPWON">Por favor, conéctese primero con la vitrocerámica y luego enciéndala con el comando ON.</string>
+    <string name="audio_errorNotConnected">Por favor, conéctese primero con la vitrocerámica.</string>
+    <string name="audio_unknowGesture">¡Oh Vaya! No he entendido lo que has dibujado. Por favor, Dibújelo de nuevo</string>
+    <string name="audio_unknowError">Se ha producido un error, conéctese de nuevo y vuelva a intentarlo.</string>
+    <string name="audio_HobPWDOWN">Bajando la potencia</string>
 </resources>
