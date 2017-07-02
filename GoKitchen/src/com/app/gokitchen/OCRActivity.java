@@ -27,6 +27,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import com.app.gokitchen.util.GoKitchenSoundManager;
 import com.app.gokitchen.util.OCR7SegmentDictionary;
 import com.app.gokitchen.util.OCR7SegmentDictionaryImpl;
 import com.app.gokitchen.util.OCR7SegmentImageEnhacement;
@@ -42,6 +43,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -65,6 +67,9 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 	private CameraBridgeViewBase mOpenCvCameraView;
 	Boolean reiniciarApp = false;
 	int thresh = 50, N = 5;
+	GoKitchenSoundManager sound;
+	int beep;
+	
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
 		public void onManagerConnected(int status) {
@@ -95,6 +100,10 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 		
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+		sound = new GoKitchenSoundManager(getApplicationContext());
+		this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		beep = sound.load(R.raw.beep);
+		
 		textToSpeech = new TextToSpeech( this, this );
 		textToSpeech.setLanguage( new Locale( "spa", "ESP" ) );
 
@@ -296,12 +305,14 @@ public class OCRActivity extends Activity implements CvCameraViewListener2,TextT
 						&& (((imageROI.width()<=(380/reductionFactorW)) && (imageROI.width()>=(95/reductionFactorW))))) {
 					
 //					Log.i(TAG, "WROI: "+imageROI.size().width+" HROI: "+imageROI.size().height);
+					sound.play(beep);
 					
 					List<MatOfPoint> listaux = new LinkedList<MatOfPoint>();
 					listaux.add(p);
 					Mat imageROI_prepared = prepareImage4OCR(imageROI,p);        		
 					Imgproc.drawContours(image, listaux, -1, FACE_RECT_COLOR,2);
-
+					
+					
 
 					BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inSampleSize = 4;

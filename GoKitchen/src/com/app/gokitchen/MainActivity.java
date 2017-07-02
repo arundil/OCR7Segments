@@ -218,7 +218,7 @@ public class MainActivity extends Activity {
 					loginfo.setText(arrayLog[10]);
 					if(ConnectBT.isChecked() && OnOff.isChecked()) {
 						if (BluetoothHandler.sendData("PWDOWN")) {
-							Toast.makeText(getBaseContext(),R.string.risePower, Toast.LENGTH_SHORT).show();
+							Toast.makeText(getBaseContext(),R.string.audio_HobPWDOWN, Toast.LENGTH_SHORT).show();
 							loginfo.setText(arrayLog[11]);
 						}
 						else {
